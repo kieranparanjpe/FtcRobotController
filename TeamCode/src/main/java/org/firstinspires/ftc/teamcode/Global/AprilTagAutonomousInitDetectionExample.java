@@ -51,7 +51,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+    int ID_TAG_OF_INTEREST = 1; // Tag ID 18 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
@@ -68,7 +68,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override

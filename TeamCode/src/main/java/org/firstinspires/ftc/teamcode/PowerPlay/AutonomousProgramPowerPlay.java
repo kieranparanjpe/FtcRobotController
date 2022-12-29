@@ -33,7 +33,7 @@ import java.util.ArrayList;
          boolean cycle = false;
          int target = 1;
 
-         while(!isStarted() && !isStopRequested())
+         while(!isStarted())
          {
              if(gamepad1.right_trigger > 0)
                  cycle = true;

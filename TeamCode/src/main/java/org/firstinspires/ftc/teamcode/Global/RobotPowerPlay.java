@@ -127,10 +127,8 @@ public  class RobotPowerPlay {
 
         imuData = new IMUData("imu", hardwareMap);
 
-       //webcamPipeline = new WebcamAprilTags(hardwareMap, linearOpMode.telemetry);
+       webcamPipeline = new WebcamAprilTags(hardwareMap, linearOpMode.telemetry);
         //webcamData = new WebcamData(hardwareMap, linearOpMode.telemetry);
-        openCVPipeline = new OpenCVPipeline(linearOpMode.telemetry, hardwareMap);
-
         /*if(linearOpMode.getClass() != DriverControl.class)
             targetBarcode = WebcamSetup(hardwareMap);*/
     }

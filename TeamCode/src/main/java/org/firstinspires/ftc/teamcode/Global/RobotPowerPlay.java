@@ -92,10 +92,10 @@ public  class RobotPowerPlay {
         leftBack = hardwareMap.get(DcMotorEx.class, "LeftBack");
         rightBack = hardwareMap.get(DcMotorEx.class, "RightBack");
 
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         SetMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         SetMode(DcMotorEx.RunMode.RUN_USING_ENCODER);

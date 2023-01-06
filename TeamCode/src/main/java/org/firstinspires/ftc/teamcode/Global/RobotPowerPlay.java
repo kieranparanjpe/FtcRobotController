@@ -57,7 +57,7 @@ public  class RobotPowerPlay {
     private PIDController rBPID = new PIDController(0.001, 0.000, 0.000);
     private GyroPIDController gyroPID = new GyroPIDController(0.5, 0, 0);
 
-    private final double maxSlideSpeed = 0.1;
+    private final double maxSlideSpeed = 0.5;
     private final double pincherLightOpen = 0.275;
     private final double pincherHardOpen = 0.2;
 
@@ -92,7 +92,7 @@ public  class RobotPowerPlay {
         leftBack = hardwareMap.get(DcMotorEx.class, "LeftBack");
         rightBack = hardwareMap.get(DcMotorEx.class, "RightBack");
 
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);

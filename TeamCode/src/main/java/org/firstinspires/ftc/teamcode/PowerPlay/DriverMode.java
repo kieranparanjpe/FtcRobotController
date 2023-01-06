@@ -125,8 +125,7 @@ public class DriverMode extends LinearOpMode
                 //telemetry.addLine("Power, " + leftBackPower);
 
 
-
-               // robot.SetPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+                robot.SetPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
             }
 
             //endregion

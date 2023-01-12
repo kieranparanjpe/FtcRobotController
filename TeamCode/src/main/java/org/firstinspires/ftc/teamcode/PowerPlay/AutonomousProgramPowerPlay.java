@@ -17,7 +17,7 @@ import java.util.ArrayList;
      private ArrayList<State> states = new ArrayList<State>();
      private ArrayList<State> asyncStates = new ArrayList<State>();
 
-     int delay = 0;
+     int delay = 2000;
 
      @Override
      public void runOpMode() throws InterruptedException
@@ -40,7 +40,7 @@ import java.util.ArrayList;
              if(gamepad1.left_trigger > 0)
                  cycle = false;
 
-             if(gamepad1.a)
+            /* if(gamepad1.a)
              {
                  if(cycle)
                      BlueAutonomous1All();
@@ -55,7 +55,7 @@ import java.util.ArrayList;
                  if(cycle)
                      BlueAutonomous2All();
                  else
-                     BlueAutonomous2NoDuck(delay);
+                     BlueAutonomous2NoCycle(delay);
 
                  chosen = "Blue 2; Cycle: " + cycle;
              }
@@ -79,7 +79,9 @@ import java.util.ArrayList;
 
                  chosen = "Red 2; Cycle: " + cycle;
              }
+*/
 
+             BlueAutonomous2NoCycle(delay);
              target = robot.GetTargetLocation();
 
              telemetry.addData("Program to run: ", chosen);
@@ -88,18 +90,20 @@ import java.util.ArrayList;
          }
 
          robot.StopWebcam();
-         SlidePosition pos = SlidePosition.MID;
+
+         SlidePosition pos = SlidePosition.LOW;
+
          if(target == 0)
-             pos = SlidePosition.LOW;
-         if(target == 1)
-             pos = SlidePosition.MID;
+             states.add(1, robot.new DriveDistancePID(900, -90, 0.5, 5000, 1));
+         if(target == 1) {
+             //add nothing
+         }
          if(target == 2)
-             pos = SlidePosition.HIGH;
+             states.add(1, robot.new DriveDistancePID(900, 90, 0.5, 5000, 1));
 
 
          robot.runtime.reset();
 
-         states.add(3, robot.new SetSlidePosition(pos));
 
          State currentState = states.get(0);
          int step = 0;
@@ -140,8 +144,8 @@ import java.util.ArrayList;
 
              robot.SlideToPosition(robot.slidePosition, 1);
 
-             telemetry.addData("Distance driven ", distanceToHub);
-             robot.outerColorSensor.Color();
+            // telemetry.addData("Distance driven ", distanceToHub);
+            // robot.outerColorSensor.Color();
              telemetry.addData("Step ", step);
 
              telemetry.addData("SLIDE", target);
@@ -193,31 +197,14 @@ import java.util.ArrayList;
 
      }
 
-     private void BlueAutonomous2NoDuck(int delay)
+     private void BlueAutonomous2NoCycle(int delay)
      {
          states = new ArrayList<State>();
 
          states.add(robot.new Wait(delay));
 
          //first drive
-         states.add(robot.new DriveDistancePID(90, 0, 0.3, 5000, 1));
-
-         //drive right / left depending on side
-         states.add(robot.new DriveDistancePID(670, 90, 0.3, 5000, 1));
-
-         states.add(robot.new DriveDistancePID(550, 0, 0.3, 5000, 1));
-
-         //slide height is here
-         states.add(robot.new Wait(1f));
-         states.add(robot.new Wait(1.5f));
-         states.add(robot.new Wait(0.75));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
-         states.add(robot.new DriveDistancePID(150, 180, 0.75, 5, 1));
-
-         //park
-         states.add(robot.new TurnGyroPID(1, 270, 2, 1, false));
-         states.add(robot.new DriveDistancePID(1500, 0, 1, 8, 1));
-
+         states.add(robot.new DriveDistancePID(900, 0, 0.5, 5000, 1));
      }
 
      private void BlueAutonomous1All()

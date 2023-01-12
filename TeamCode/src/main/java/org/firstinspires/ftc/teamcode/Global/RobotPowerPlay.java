@@ -65,6 +65,7 @@ public  class RobotPowerPlay {
     private final Hashtable<SlidePosition, Double> slidePositions = new Hashtable<SlidePosition, Double>();
     private final int[] slidePositionBounds = new int[3];
     private final double[] armPositions = new double[4];
+    public boolean dropArm = false;
 
 
     private WebcamData webcamData;
@@ -111,8 +112,8 @@ public  class RobotPowerPlay {
             //    , linearOpMode.telemetry);
         //mess with these values for capping
 
-        armServo1 = new ServoData("4Bar1", 0.6, 0.35, hardwareMap, Servo.Direction.REVERSE);
-        armServo2 = new ServoData("4Bar2", 0.6, 0.35, hardwareMap, Servo.Direction.FORWARD);
+        armServo1 = new ServoData("4Bar1", 0.5, 0.35, hardwareMap, Servo.Direction.REVERSE);
+        armServo2 = new ServoData("4Bar2", 0.5, 0.35, hardwareMap, Servo.Direction.FORWARD);
 
         slideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -141,10 +142,10 @@ public  class RobotPowerPlay {
         slidePositions.put(SlidePosition.MID, 2000.0); //800
         slidePositions.put(SlidePosition.HIGH, 2900.0); // 1367.4270557
 
-        armPositions[0] = 0.97;
-        armPositions[1] = 0.7;
-        armPositions[2] = 0.4;
-        armPositions[3] = 0.4;
+        armPositions[0] = 0.95;
+        armPositions[1] = 0.8;
+        armPositions[2] = 0.35;
+        armPositions[3] = 0.35;
 
         slidePositionBounds[0] = 50;
         slidePositionBounds[1] = 800;
@@ -571,6 +572,7 @@ public  class RobotPowerPlay {
             this.speed = speed;
             this.timeoutRedundancy = timeoutRedundancy;
             this.accuracy = accuracy;
+            this.runAsync = false;
         }
 
         @Override
@@ -756,6 +758,9 @@ public  class RobotPowerPlay {
 
     public void ArmToPosition()
     {
+        if(!dropArm)
+            return;
+
         int current = slidePositions.get(slidePosition).intValue();
         if(slideMotor2.getCurrentPosition() < 800 && current >= 800)
             current = slideMotor2.getCurrentPosition();

@@ -134,6 +134,8 @@ public class DriverMode extends LinearOpMode
                 manualSlide = !manualSlide;
 
 
+
+
             //robot.slideMotor1.setPower(attachmentController.left_stick_y);
             //robot.slideMotor2.setPower(attachmentController.left_stick_y);
 
@@ -150,8 +152,10 @@ public class DriverMode extends LinearOpMode
 
                 if(attachmentController.y)
                     robot.slidePosition = SlidePosition.HIGH;
-                else if(attachmentController.a)
+                else if(attachmentController.a) {
                     robot.slidePosition = SlidePosition.DOWN;
+                    robot.dropArm = true;
+                }
                 else if(attachmentController.b)
                     robot.slidePosition = SlidePosition.MID;
                 else if(attachmentController.x)

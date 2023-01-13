@@ -17,7 +17,8 @@ import java.util.ArrayList;
      private ArrayList<State> states = new ArrayList<State>();
      private ArrayList<State> asyncStates = new ArrayList<State>();
 
-     int delay = 2000;
+     //in seconds
+     int delay = 0;
 
      @Override
      public void runOpMode() throws InterruptedException
@@ -108,8 +109,6 @@ import java.util.ArrayList;
          State currentState = states.get(0);
          int step = 0;
 
-         double distanceToHub = 0;
-
          while(opModeIsActive() && currentState != null)
          {
              if(currentState.runAsync)
@@ -127,14 +126,10 @@ import java.util.ArrayList;
              }
 
              double progress = currentState.Run();
-
+             telemetry.addData("Step ", step);
+             telemetry.addData("Step progress ", currentState.getProgress());
              if(progress >= 1)
              {
-                 if(step == 5)
-                 {
-
-                 }
-
                  step++;
                  if(step >= states.size())
                      currentState = null;
@@ -146,9 +141,10 @@ import java.util.ArrayList;
 
             // telemetry.addData("Distance driven ", distanceToHub);
             // robot.outerColorSensor.Color();
-             telemetry.addData("Step ", step);
 
-             telemetry.addData("SLIDE", target);
+
+
+             telemetry.addData("Target Zone", target);
 
 
              // telemetry.addLine("Progress: " + progress);
@@ -204,7 +200,7 @@ import java.util.ArrayList;
          states.add(robot.new Wait(delay));
 
          //first drive
-         states.add(robot.new DriveDistancePID(900, 0, 0.5, 5000, 1));
+         states.add(robot.new DriveDistancePID(100, 0, 0.5, 5000, 1));
      }
 
      private void BlueAutonomous1All()

@@ -10,4 +10,9 @@ public abstract class State {
     {
         return 1;
     }
+
+    public double getProgress()
+    {
+        return progress;
+    }
 }

@@ -84,7 +84,7 @@ public class DriverMode extends LinearOpMode
             if(driveState == DriveControlState.DRIVING)
             {
 
-                /*double driveTurn = -gamepad1.right_stick_x;
+               /* double driveTurn = -gamepad1.right_stick_x;
                 //driveVertical = -gamepad1.right_stick_y;
                 //driveHorizontal = gamepad1.right_stick_x;
 
@@ -96,21 +96,32 @@ public class DriverMode extends LinearOpMode
                 // also helps set maximum possible value of 1/sqrt(2) for x and y controls if at a 45 degree angle (which yields greatest possible value for y+x)
                 double gamepadDegree = Math.atan2(gamepadYCoordinate, gamepadXCoordinate);
                 //the inverse tangent of opposite/adjacent gives us our gamepad degree
-                double robotDegree = robot.imuData.HeadingAngle();
+                double robotDegree = robot.imuData.HeadingAngleRAD();
                 //gives us the angle our robot is at
                 double movementDegree = gamepadDegree - robotDegree;
+                telemetry.addData("Movement> degree", movementDegree);
+
                 //adjust the angle we need to move at by finding needed movement degree based on gamepad and robot angles
-                double gamepadXControl = Math.cos(Math.toRadians(movementDegree)) * gamepadMagnitude;
+                double gamepadXControl = Math.cos((movementDegree)) * gamepadMagnitude * driveSpeed;
                 //by finding the adjacent side, we can get our needed x value to power our motors
-                double gamepadYControl = Math.sin(Math.toRadians(movementDegree)) * gamepadMagnitude;
+                double gamepadYControl = Math.sin((movementDegree)) * gamepadMagnitude * driveSpeed;
                 //by finding the opposite side, we can get our needed y value to power our motors
 
+
+                telemetry.addData("GPX", gamepadXControl);
+                telemetry.addData("GPY", gamepadYControl);
 
                 double rightFrontPower = Range.clip((gamepadYControl * Math.abs(gamepadYControl) - gamepadXControl * Math.abs(gamepadXControl) + driveTurn), -driveSpeed, driveSpeed);
                 double rightBackPower = Range.clip((gamepadYControl * Math.abs(gamepadYControl) + gamepadXControl * Math.abs(gamepadXControl) + driveTurn), -driveSpeed, driveSpeed);
                 double leftFrontPower = Range.clip((gamepadYControl * Math.abs(gamepadYControl) + gamepadXControl * Math.abs(gamepadXControl) - driveTurn), -driveSpeed, driveSpeed);
                 double leftBackPower = Range.clip((gamepadYControl * Math.abs(gamepadYControl) - gamepadXControl * Math.abs(gamepadXControl) - driveTurn), -driveSpeed, driveSpeed);
-              */
+
+               /* double rightFrontPower = Range.clip((gamepadYControl - gamepadXControl + driveTurn), -driveSpeed, driveSpeed);
+                double rightBackPower = Range.clip((gamepadYControl + gamepadXControl + driveTurn), -driveSpeed, driveSpeed);
+                double leftFrontPower = Range.clip((gamepadYControl + gamepadXControl - driveTurn), -driveSpeed, driveSpeed);
+                double leftBackPower = Range.clip((gamepadYControl - gamepadXControl - driveTurn), -driveSpeed, driveSpeed);*/
+
+
                 //Normal Driving
                 double leftY = -gamepad1.left_stick_y; //driving
                 double leftX = gamepad1.left_stick_x;
@@ -118,7 +129,7 @@ public class DriverMode extends LinearOpMode
 
 
                 double leftBackPower = Range.clip(leftY - leftX + rightX, -driveSpeed, driveSpeed);
-                double leftFrontPower = Range.clip(leftY + leftX + rightX, -driveSpeed, driveSpeed);
+                double leftFrontPower = Range.clip(leftY + leftX + rightX, -driveSpeed, driveSpeed);//problem left x
                 double rightBackPower = Range.clip(leftY + leftX - rightX, -driveSpeed, driveSpeed);
                 double rightFrontPower = Range.clip(leftY - leftX - rightX, -driveSpeed, driveSpeed);
 

@@ -198,6 +198,7 @@ public class DriverMode extends LinearOpMode
             }
 
             //endregion
+            telemetry.addData("Servo Pos: ", robot.armServo1.servo.getPosition());
             telemetry.addLine("Slide Pos: " + robot.slideMotor2.getCurrentPosition());
             telemetry.addLine("Angle: " + robot.imuData.HeadingAngle());
             telemetry.addData("Drive Type", driveState.toString());

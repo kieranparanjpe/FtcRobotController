@@ -143,7 +143,7 @@ public  class RobotPowerPlay {
         slidePositions.put(SlidePosition.HIGH, 3100.0); // 1367.4270557
 
         armPositions[0] = 0.9;
-        armPositions[1] = 0.8;
+        armPositions[1] = 0.5;
         armPositions[2] = 0.2;
         armPositions[3] = 0.2;
 

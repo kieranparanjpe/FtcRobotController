@@ -120,7 +120,6 @@ public class WebcamAprilTags
 
         }
 
-        telemetry.update();
         if(tagOfInterest == null)
             return 1;
         return tagOfInterest.id;

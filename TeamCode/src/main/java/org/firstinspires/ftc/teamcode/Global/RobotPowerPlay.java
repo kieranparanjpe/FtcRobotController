@@ -57,7 +57,7 @@ public  class RobotPowerPlay {
     private PIDController rBPID = new PIDController(0.001, 0.000, 0.000);
     private GyroPIDController gyroPID = new GyroPIDController(0.5, 0, 0);
 
-    private final double maxSlideSpeed = 1;
+    private final double maxSlideSpeed = 0.4;
     private final double pincherLightOpen = 0.275;
     private final double pincherHardOpen = 0.2;
 
@@ -112,8 +112,8 @@ public  class RobotPowerPlay {
             //    , linearOpMode.telemetry);
         //mess with these values for capping
 
-        armServo1 = new ServoData("4Bar1", 0.5, 0.35, hardwareMap, Servo.Direction.REVERSE);
-        armServo2 = new ServoData("4Bar2", 0.5, 0.35, hardwareMap, Servo.Direction.FORWARD);
+        armServo1 = new ServoData("4Bar1", 0.4, 0.35, hardwareMap, Servo.Direction.REVERSE);
+        armServo2 = new ServoData("4Bar2", 0.4, 0.35, hardwareMap, Servo.Direction.FORWARD);
 
         slideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -138,8 +138,8 @@ public  class RobotPowerPlay {
     {
         slidePositions.put(SlidePosition.DOWN, 0.0);
         slidePositions.put(SlidePosition.GROUND, 100.0);
-        slidePositions.put(SlidePosition.LOW, 1200.0); //400
-        slidePositions.put(SlidePosition.MID, 2000.0); //800
+        slidePositions.put(SlidePosition.LOW, 1100.0); //400
+        slidePositions.put(SlidePosition.MID, 2100.0); //800
         slidePositions.put(SlidePosition.HIGH, 3100.0); // 1367.4270557
 
         armPositions[0] = 0.9;
@@ -738,7 +738,7 @@ public  class RobotPowerPlay {
     {
         //if(target == SlidePosition.DOWN)
             //bucketServo.SetPosition(false);
-        double powerRight = rightSlidePID.Compute(slidePositions.get(target), slideMotor2.getCurrentPosition());
+        double powerRight = rightSlidePID.Compute(slidePositions.get(target) + 20, slideMotor2.getCurrentPosition());
         double powerLeft = leftSlidePID.Compute(slidePositions.get(target), slideMotor1.getCurrentPosition());
 
         if(Math.abs(powerRight) < 0.02)

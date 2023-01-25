@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
          String chosen = "";
          boolean cycle = false;
-         int target = 1;
+         int target = 2;
 
          while(!isStarted())
          {
@@ -94,13 +94,13 @@ import java.util.ArrayList;
 
          SlidePosition pos = SlidePosition.LOW;
 
-         if(target == 0)
-             states.add(1, robot.new DriveDistancePID(900, -90, 0.5, 5000, 1));
-         if(target == 1) {
+         if(target == 1)
+             states.add(3, robot.new DriveDistancePID(850, -90, 0.35, 5000, 1));
+         if(target == 2) {
              //add nothing
          }
-         if(target == 2)
-             states.add(1, robot.new DriveDistancePID(900, 90, 0.5, 5000, 1));
+         if(target == 3)
+             states.add(3, robot.new DriveDistancePID(850, 90, 0.35, 5000, 1));
 
 
          robot.runtime.reset();
@@ -198,9 +198,12 @@ import java.util.ArrayList;
          states = new ArrayList<State>();
 
          states.add(robot.new Wait(delay));
-
          //first drive
-         states.add(robot.new DriveDistancePID(100, 0, 0.5, 5000, 1));
+         states.add(robot.new DriveDistancePID(50, 0, 0.5, 5000, 1));
+         states.add(robot.new TurnGyroPID(0.2, 0, 1000, 1, false));
+         states.add(robot.new DriveDistancePID(900, 0, 0.35, 5000, 1));
+         states.add(robot.new TurnGyroPID(0.2, 0, 1000, 1, false));
+
      }
 
      private void BlueAutonomous1All()

@@ -57,7 +57,7 @@ public  class RobotPowerPlay {
     private PIDController rBPID = new PIDController(0.001, 0.000, 0.000);
     private GyroPIDController gyroPID = new GyroPIDController(0.5, 0, 0);
 
-    private final double maxSlideSpeed = 0.4;
+    private final double maxSlideSpeed = 1;
     private final double pincherLightOpen = 0.275;
     private final double pincherHardOpen = 0.2;
 
@@ -147,7 +147,7 @@ public  class RobotPowerPlay {
         armPositions[2] = 0.2;
         armPositions[3] = 0.2;
 
-        slidePositionBounds[0] = 50;
+        slidePositionBounds[0] = 100;
         slidePositionBounds[1] = 800;
         slidePositionBounds[2] = 1000;
 

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.opencv.core.Scalar;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,7 +48,7 @@ public  class RobotPowerPlay {
     public ServoData armServo2;
     public ServoData pincherServo;
 
-    public ColorSensor outerColorSensor;
+    public ColorSensor slideColourSensor;
 
     public PIDController rightSlidePID = new PIDController(0.001, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
     public PIDController leftSlidePID = new PIDController(0.001, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
@@ -62,9 +64,8 @@ public  class RobotPowerPlay {
     private final double pincherHardOpen = 0.2;
 
     public SlidePosition slidePosition = SlidePosition.DOWN;
-    private final Hashtable<SlidePosition, Double> slidePositions = new Hashtable<SlidePosition, Double>();
-    private final int[] slidePositionBounds = new int[3];
-    private final double[] armPositions = new double[4];
+    private final Hashtable<SlidePosition, Integer> slidePositions = new Hashtable<SlidePosition, Integer>();
+    private final Hashtable<SlidePosition, Double> armPositions = new Hashtable<SlidePosition, Double>();
     public boolean dropArm = false;
 
 
@@ -101,6 +102,11 @@ public  class RobotPowerPlay {
         SetMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         SetMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+        slideColourSensor = new ColorSensor(hardwareMap.get(RevColorSensorV3.class, "SlideSensor"),
+                new ColourRange[] { new ColourRange(new Scalar(140, 100, 0), new Scalar(260, 260, 260)), new ColourRange(new Scalar(0, 100, 0), new Scalar(40, 260, 260))}
+
+                , linearOpMode.telemetry);
+
 
         slideMotor1 = hardwareMap.get(DcMotorEx.class, "SlideMotor1");
         slideMotor2 = hardwareMap.get(DcMotorEx.class, "SlideMotor2");
@@ -136,22 +142,27 @@ public  class RobotPowerPlay {
 
     private void SetSlidePositions()
     {
-        slidePositions.put(SlidePosition.DOWN, 0.0);
-        slidePositions.put(SlidePosition.GROUND, 100.0);
-        slidePositions.put(SlidePosition.LOW, 1100.0); //400
-        slidePositions.put(SlidePosition.MID, 2100.0); //800
-        slidePositions.put(SlidePosition.HIGH, 3100.0); // 1367.4270557
-
-        armPositions[0] = 0.86; //0.9
-        armPositions[1] = 0.5;
-        armPositions[2] = 0.2;
-        armPositions[3] = 0.2;
-
-        slidePositionBounds[0] = 100;
-        slidePositionBounds[1] = 800;
-        slidePositionBounds[2] = 1000;
+        slidePositions.put(SlidePosition.DOWN, 0);
+        slidePositions.put(SlidePosition.DOWN1, 0);
+        slidePositions.put(SlidePosition.DOWN2, 0);
+        slidePositions.put(SlidePosition.DOWN3, 0);
+        slidePositions.put(SlidePosition.DOWN4, 0);
+        slidePositions.put(SlidePosition.GROUND, 67); //100
+        slidePositions.put(SlidePosition.LOW, 733); //1100
+        slidePositions.put(SlidePosition.MID, 1332); //2000
+        slidePositions.put(SlidePosition.HIGH, 2064); // 3100
 
 
+        armPositions.put(SlidePosition.DOWN, 0.86);
+        armPositions.put(SlidePosition.DOWN1, 0.83);
+        armPositions.put(SlidePosition.DOWN2, 0.79);
+        armPositions.put(SlidePosition.DOWN3, 0.76);
+        armPositions.put(SlidePosition.DOWN4, 0.70);
+
+        armPositions.put(SlidePosition.GROUND, 0.5);
+        armPositions.put(SlidePosition.LOW, 0.12); //400
+        armPositions.put(SlidePosition.MID, 0.2); //800
+        armPositions.put(SlidePosition.HIGH, 0.2);
 
     }
 
@@ -483,6 +494,68 @@ public  class RobotPowerPlay {
         }
     }
 
+    public class TurnColor extends State
+    {
+        ColorSensor sensor;
+        double direction;
+        double speed;
+        double distanceMax;
+        public double distance;
+        double timeoutRedundancy;
+
+
+
+        //direction: 1 is right, -1 is left
+        public TurnColor(ColorSensor sensor, double direction, double speed, double timeoutRedundancy, boolean async)
+        {
+            runAsync = async;
+            this.sensor = sensor;
+            this.direction = direction;
+            this.speed = speed;
+            this.timeoutRedundancy = timeoutRedundancy;
+        }
+
+        @Override
+        public double Run() {
+            linearOpMode.telemetry.addData("sensor distance: ", sensor.Distance());
+            if (progress == 0) {
+                progress = 0.01;
+                timeStarted = runtime.seconds();
+                SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                //VectorData distanceM = VectorData.SetMag(distance, v);
+
+                SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+                SetPower(speed * direction, -speed * direction, speed*direction, -speed * direction);
+            } else if (progress < 1) {
+                if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && sensor.Distance() > 0) {
+                    int pos = leftFront.getCurrentPosition();
+                    linearOpMode.telemetry.addData("Motor", pos);
+                    linearOpMode.telemetry.addLine("Motors: Running");
+                    //linearOpMode.telemetry.update();
+                } else {
+                    progress = 1.5;
+                }
+            }
+            if (progress >= 1) {
+                linearOpMode.telemetry.addLine("Motors: Complete");
+
+                linearOpMode.telemetry.update();
+
+                SetPower(0, 0, 0, 0);
+
+                SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                int pos = leftFront.getCurrentPosition();
+                distance = pos / encoderTickPerMM;
+
+                linearOpMode.sleep(100);
+            }
+            return progress;
+        }
+    }
+
     public class DriveDistanceDist extends State
     {
         ColorSensor sensor;
@@ -703,6 +776,7 @@ public  class RobotPowerPlay {
 
         @Override
         public double Run() {
+            dropArm = true;
             slidePosition = position;
             return 1.5;
         }
@@ -715,12 +789,14 @@ public  class RobotPowerPlay {
 
         public ArmToPosition(boolean state)
         {
+            dropArm = false;
             this.state = state;
             this.runAsync = false;
         }
 
         @Override
         public double Run() {
+            dropArm = false;
             armServo1.SetPosition(state);
             armServo2.SetPosition(state);
             return 1.5;
@@ -728,7 +804,21 @@ public  class RobotPowerPlay {
         }
     }
 
+    public class SetClaw extends State
+    {
+        public boolean state;
 
+        public SetClaw(boolean position)
+        {
+            this.state = position;
+        }
+
+        @Override
+        public double Run() {
+            pincherServo.SetPosition(state);
+            return 1.5;
+        }
+    }
 
     //endregion
 
@@ -736,22 +826,26 @@ public  class RobotPowerPlay {
 
     public double SlideToPosition(SlidePosition target, double accuaracy)
     {
-        //if(target == SlidePosition.DOWN)
-            //bucketServo.SetPosition(false);
-        double powerRight = rightSlidePID.Compute(slidePositions.get(target) + 20, slideMotor2.getCurrentPosition());
-        double powerLeft = leftSlidePID.Compute(slidePositions.get(target), slideMotor1.getCurrentPosition());
+        int targetHeight = slidePositions.get(slidePosition);
+        int current = (slideMotor1.getCurrentPosition() + slideMotor2.getCurrentPosition())/2;
 
-        if(Math.abs(powerRight) < 0.02)
-            powerRight = 0;
-        if(Math.abs(powerLeft) < 0.02)
-            powerLeft = 0;
+        if(targetHeight >= current || armServo1.servo.getPosition() > armServo1.startPosition - 0.05) {
 
-        linearOpMode.telemetry.addLine("Right Slide Position " + slideMotor2.getCurrentPosition());
-        linearOpMode.telemetry.addLine("Left Slide Position " + slideMotor1.getCurrentPosition());
+            double powerRight = rightSlidePID.Compute(slidePositions.get(target), slideMotor2.getCurrentPosition());
+            double powerLeft = leftSlidePID.Compute(slidePositions.get(target), slideMotor1.getCurrentPosition());
+
+            if (Math.abs(powerRight) < 0.02)
+                powerRight = 0;
+            if (Math.abs(powerLeft) < 0.02)
+                powerLeft = 0;
+
+            linearOpMode.telemetry.addLine("Right Slide Position " + slideMotor2.getCurrentPosition());
+            linearOpMode.telemetry.addLine("Left Slide Position " + slideMotor1.getCurrentPosition());
 
 
-        slideMotor1.setPower(Range.clip(powerLeft, -maxSlideSpeed, maxSlideSpeed));
-        slideMotor2.setPower(Range.clip(powerRight, -maxSlideSpeed, maxSlideSpeed));
+            slideMotor1.setPower(Range.clip(powerLeft, -maxSlideSpeed, maxSlideSpeed));
+            slideMotor2.setPower(Range.clip(powerRight, -maxSlideSpeed, maxSlideSpeed));
+        }
 
         return (leftSlidePID.Completed(accuaracy) + rightSlidePID.Completed(accuaracy)) / 2;
     }
@@ -761,11 +855,36 @@ public  class RobotPowerPlay {
         if(!dropArm)
             return;
 
-        int current = slidePositions.get(slidePosition).intValue();
-        if(slideMotor2.getCurrentPosition() < 800 && current >= 800)
-            current = slideMotor2.getCurrentPosition();
+        int targetHeight = slidePositions.get(slidePosition);
+        int current = (slideMotor1.getCurrentPosition() + slideMotor2.getCurrentPosition())/2;
+
+
+       // if(slideMotor2.getCurrentPosition() < 800 && current >= 800)
+           // targetHeight = slideMotor2.getCurrentPosition();
+        
         double target = 0;
-        if(current < slidePositionBounds[0])
+        
+        if(targetHeight > current)
+        {
+            if(current < targetHeight - 150)
+            {
+                target = armServo1.startPosition;
+            }
+            else
+                target = armPositions.get(slidePosition);
+        }
+
+        if(targetHeight <= current)
+        {
+            if(current > targetHeight + 300)
+                target = armServo1.startPosition;
+            else
+                target = armPositions.get(slidePosition);
+
+        }
+        
+        
+     /*   if(targetHeight < slidePositionBounds[0])
         {
             target = armPositions[0];
             if(pincherServo.currentPosition == pincherLightOpen)
@@ -774,7 +893,7 @@ public  class RobotPowerPlay {
                 pincherServo.SetPosition(true);
             }
         }
-        else if(current >= slidePositionBounds[0] && current < slidePositionBounds[1]) {
+        else if(targetHeight >= slidePositionBounds[0] && current < slidePositionBounds[1]) {
             target = armPositions[1];
             if(pincherServo.currentPosition == pincherHardOpen)
             {
@@ -782,7 +901,7 @@ public  class RobotPowerPlay {
                 pincherServo.SetPosition(true);
             }
         }
-        else if(current >= slidePositionBounds[1] && current < slidePositionBounds[2]) {
+        else if(targetHeight >= slidePositionBounds[1] && targetHeight < slidePositionBounds[2]) {
             target = armPositions[2];
             if(pincherServo.currentPosition == pincherHardOpen)
             {
@@ -798,10 +917,13 @@ public  class RobotPowerPlay {
                 pincherServo.SetPosition(true);
             }
 
-        }
+        }*/
         armServo1.SetPosition(target);
         armServo2.SetPosition(target);
     }
+
+
+
 
     public double SlideToPosition(double change, double accuaracy)
     {

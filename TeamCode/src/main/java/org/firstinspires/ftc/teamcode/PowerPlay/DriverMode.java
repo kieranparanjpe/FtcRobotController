@@ -50,6 +50,7 @@ public class DriverMode extends LinearOpMode
         attachmentController = gamepad2;
 
         robot = new RobotPowerPlay(hardwareMap, this);
+        robot.dropArm = false;
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -171,8 +172,16 @@ public class DriverMode extends LinearOpMode
                     robot.slidePosition = SlidePosition.MID;
                 else if(attachmentController.x)
                     robot.slidePosition = SlidePosition.LOW;
-                else if(attachmentController.dpad_up)
+                else if(attachmentController.left_bumper)
                     robot.slidePosition = SlidePosition.GROUND;
+                else if(attachmentController.dpad_down)
+                    robot.slidePosition = SlidePosition.DOWN1;
+                else if(attachmentController.dpad_left)
+                    robot.slidePosition = SlidePosition.DOWN2;
+                else if(attachmentController.dpad_right)
+                    robot.slidePosition = SlidePosition.DOWN3;
+                else if(attachmentController.dpad_up)
+                    robot.slidePosition = SlidePosition.DOWN4;
 
 
                 robot.SlideToPosition(robot.slidePosition, 1);
@@ -182,6 +191,12 @@ public class DriverMode extends LinearOpMode
             {
                 robot.armServo1.ChangePosition(attachmentController.right_stick_y * 0.01);
                 robot.armServo2.ChangePosition(attachmentController.right_stick_y * 0.01);
+
+            }
+            else if(attachmentController == gamepad2 && attachmentController.right_bumper)
+            {
+                robot.armServo1.SetPosition(0.3);
+                robot.armServo2.SetPosition(0.3);
 
             }
             else
@@ -198,6 +213,7 @@ public class DriverMode extends LinearOpMode
             }
 
             //endregion
+            telemetry.addData("colour sensor dist: ", robot.slideColourSensor.Distance());
             telemetry.addData("Servo Pos: ", robot.armServo1.servo.getPosition());
             telemetry.addLine("Slide Pos: " + robot.slideMotor2.getCurrentPosition());
             telemetry.addLine("Angle: " + robot.imuData.HeadingAngle());

@@ -168,9 +168,6 @@ import java.util.ArrayList;
              // telemetry.addLine("Progress: " + progress);
              telemetry.update();
          }
-
-
-
      }
      private void AutoNoCycle()
      {
@@ -263,8 +260,6 @@ import java.util.ArrayList;
      private void RedAutonomousLeft()
      {
          states = new ArrayList<State>();
-
-
          //first drive
          states.add(robot.new DriveDistancePID(950, 0, 0.3, 5000, 1));
          //states.add(robot.new TurnGyroPID(1, 25, 2, 1, false));
@@ -274,7 +269,9 @@ import java.util.ArrayList;
          states.add(robot.new TurnColor(robot.slideColourSensor, 1, 0.05, 15, false));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
          states.add(robot.new Wait(1));
+
          states.add(robot.new SetClaw(true));
+
          states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
          states.add(robot.new Wait(2));
          states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));

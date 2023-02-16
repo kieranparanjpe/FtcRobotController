@@ -789,7 +789,6 @@ public  class RobotPowerPlay {
 
         public ArmToPosition(boolean state)
         {
-            dropArm = false;
             this.state = state;
             this.runAsync = false;
         }
@@ -883,47 +882,9 @@ public  class RobotPowerPlay {
 
         }
         
-        
-     /*   if(targetHeight < slidePositionBounds[0])
-        {
-            target = armPositions[0];
-            if(pincherServo.currentPosition == pincherLightOpen)
-            {
-                pincherServo.targetPosition = pincherHardOpen;
-                pincherServo.SetPosition(true);
-            }
-        }
-        else if(targetHeight >= slidePositionBounds[0] && current < slidePositionBounds[1]) {
-            target = armPositions[1];
-            if(pincherServo.currentPosition == pincherHardOpen)
-            {
-                pincherServo.targetPosition = pincherLightOpen;
-                pincherServo.SetPosition(true);
-            }
-        }
-        else if(targetHeight >= slidePositionBounds[1] && targetHeight < slidePositionBounds[2]) {
-            target = armPositions[2];
-            if(pincherServo.currentPosition == pincherHardOpen)
-            {
-                pincherServo.targetPosition = pincherLightOpen;
-                pincherServo.SetPosition(true);
-            }
-        }
-        else {
-            target = armPositions[3];
-            if(pincherServo.currentPosition == pincherHardOpen)
-            {
-                pincherServo.targetPosition = pincherLightOpen;
-                pincherServo.SetPosition(true);
-            }
-
-        }*/
         armServo1.SetPosition(target);
         armServo2.SetPosition(target);
     }
-
-
-
 
     public double SlideToPosition(double change, double accuaracy)
     {

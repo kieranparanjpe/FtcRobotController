@@ -150,7 +150,7 @@ public  class RobotPowerPlay {
         slidePositions.put(SlidePosition.GROUND, 67); //100
         slidePositions.put(SlidePosition.LOW, 733); //1100
         slidePositions.put(SlidePosition.MID, 1332); //2000
-        slidePositions.put(SlidePosition.HIGH, 2264); // 2064 -- original: 3100
+        slidePositions.put(SlidePosition.HIGH, 2064); // 2064 -- original: 3100
 
 
         armPositions.put(SlidePosition.DOWN, 0.86);

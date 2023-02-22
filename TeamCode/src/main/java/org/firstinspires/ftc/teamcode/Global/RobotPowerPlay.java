@@ -150,7 +150,7 @@ public  class RobotPowerPlay {
         slidePositions.put(SlidePosition.GROUND, 67); //100
         slidePositions.put(SlidePosition.LOW, 733); //1100
         slidePositions.put(SlidePosition.MID, 1332); //2000
-        slidePositions.put(SlidePosition.HIGH, 2064); // 2064 -- original: 3100
+        slidePositions.put(SlidePosition.HIGH, 2164); // 2064 -- original: 3100
 
 
         armPositions.put(SlidePosition.DOWN, 0.86);
@@ -830,8 +830,10 @@ public  class RobotPowerPlay {
 
         if(targetHeight >= current || armServo1.servo.getPosition() > armServo1.startPosition - 0.05) {
 
-            double powerRight = rightSlidePID.Compute(slidePositions.get(target), slideMotor2.getCurrentPosition());
-            double powerLeft = leftSlidePID.Compute(slidePositions.get(target), slideMotor1.getCurrentPosition());
+
+           double powerRight = rightSlidePID.Compute(slidePositions.get(target), slideMotor2.getCurrentPosition());
+           double powerLeft = leftSlidePID.Compute(slidePositions.get(target), slideMotor1.getCurrentPosition());
+
 
             if (Math.abs(powerRight) < 0.02)
                 powerRight = 0;

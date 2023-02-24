@@ -291,7 +291,7 @@ import java.util.ArrayList;
 
          states.add(robot.new SetSlidePosition(SlidePosition.LOW));
          states.add(robot.new TurnGyroPID(1, 75, 2, 1, false));
-         states.add(robot.new DriveDistancePID(115, 0, 0.5, 5000, 1));
+         states.add(robot.new DriveDistancePID(128, 0, 0.5, 5000, 1));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
          states.add(robot.new ArmToPosition(true));
          states.add(robot.new Wait(1));
@@ -302,7 +302,7 @@ import java.util.ArrayList;
          states.add(robot.new Wait(1));
          states.add(robot.new SetClaw(true));
          states.add(robot.new Wait(0.3));
-         states.add(robot.new DriveDistancePID(50, 180, 0.3, 5000, 1));
+         states.add(robot.new DriveDistancePID(60, 180, 0.3, 5000, 1));
          states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
          states.add(robot.new Wait(0.3));
          states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));

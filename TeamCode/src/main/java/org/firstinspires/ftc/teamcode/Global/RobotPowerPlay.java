@@ -61,7 +61,7 @@ public  class RobotPowerPlay {
 
     private final double maxSlideSpeed = 1;
     private final double pincherLightOpen = 0.275;
-    private final double pincherHardOpen = 0.2;
+    private final double pincherHardOpen = 0.175;
 
     public SlidePosition slidePosition = SlidePosition.DOWN;
     private final Hashtable<SlidePosition, Integer> slidePositions = new Hashtable<SlidePosition, Integer>();
@@ -530,7 +530,67 @@ public  class RobotPowerPlay {
 
                 SetPower(speed * direction, -speed * direction, speed*direction, -speed * direction);
             } else if (progress < 1) {
-                if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && sensor.Distance() > 0) {
+                if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && sensor.Distance() > 40) {
+                    int pos = leftFront.getCurrentPosition();
+                    linearOpMode.telemetry.addData("Motor", pos);
+                    linearOpMode.telemetry.addLine("Motors: Running");
+                    //linearOpMode.telemetry.update();
+                } else {
+                    progress = 1.5;
+                }
+            }
+            if (progress >= 1) {
+                linearOpMode.telemetry.addLine("Motors: Complete");
+
+                linearOpMode.telemetry.update();
+
+                SetPower(0, 0, 0, 0);
+
+                SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                int pos = leftFront.getCurrentPosition();
+                distance = pos / encoderTickPerMM;
+
+                linearOpMode.sleep(100);
+            }
+            return progress;
+        }
+    }
+
+    public class DriveColourDist extends State
+    {
+        ColorSensor sensor;
+        double direction;
+        double speed;
+        double distanceMax;
+        public double distance;
+        double timeoutRedundancy;
+
+        //direction: 1 is right, -1 is left
+        public DriveColourDist(ColorSensor sensor, double direction, double speed, double timeoutRedundancy, boolean async)
+        {
+            runAsync = async;
+            this.sensor = sensor;
+            this.direction = direction;
+            this.speed = speed;
+            this.timeoutRedundancy = timeoutRedundancy;
+        }
+
+        @Override
+        public double Run() {
+            linearOpMode.telemetry.addData("sensor distance: ", sensor.Distance());
+            if (progress == 0) {
+                progress = 0.01;
+                timeStarted = runtime.seconds();
+                SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                //VectorData distanceM = VectorData.SetMag(distance, v);
+
+                SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+                SetPower(speed * direction, -speed * direction, speed*direction, -speed * direction);
+            } else if (progress < 1) {
+                if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && sensor.Distance() > 40) {
                     int pos = leftFront.getCurrentPosition();
                     linearOpMode.telemetry.addData("Motor", pos);
                     linearOpMode.telemetry.addLine("Motors: Running");
@@ -591,7 +651,7 @@ public  class RobotPowerPlay {
 
                 SetPower(v.x * speed, v.y * speed, v.y * speed, v.x * speed);
             } else if (progress < 1) {
-                if (linearOpMode.opModeIsActive() && distance < distanceMax && sensor.Distance() < sensor.distance) {
+                if (linearOpMode.opModeIsActive() && distance < distanceMax && sensor.Distance() > sensor.distance) {
                     int pos = leftFront.getCurrentPosition();
                     linearOpMode.telemetry.addData("Motor", pos);
                     linearOpMode.telemetry.addLine("Motors: Running");
@@ -847,6 +907,19 @@ public  class RobotPowerPlay {
             slideMotor1.setPower(Range.clip(powerLeft, -maxSlideSpeed, maxSlideSpeed));
             slideMotor2.setPower(Range.clip(powerRight, -maxSlideSpeed, maxSlideSpeed));
         }
+
+        double tp = pincherServo.targetPosition;
+
+        if(current > 500)
+        {
+            pincherServo.targetPosition = pincherLightOpen;
+        }
+        else
+            pincherServo.targetPosition = pincherHardOpen;
+
+        if(pincherServo.targetPosition != tp && pincherServo.currentPosition == tp)
+            pincherServo.SetPosition(true);
+
 
         return (leftSlidePID.Completed(accuaracy) + rightSlidePID.Completed(accuaracy)) / 2;
     }

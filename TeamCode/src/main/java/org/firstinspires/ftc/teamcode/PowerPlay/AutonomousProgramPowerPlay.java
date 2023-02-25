@@ -30,14 +30,29 @@ import java.util.ArrayList;
          robot = new RobotPowerPlay(hardwareMap, this);
 
 
-         String chosen = "Auto: default park";
-         boolean cycle = false;
+         String chosen = "";
+         boolean cycle = true;
          int target = 2;
 
          AutoNoCycle();
 
          while(!isStarted())
          {
+             if(gamepad1.right_trigger > 0)
+                 cycle = true;
+             if(gamepad1.left_trigger > 0)
+                 cycle = false;
+
+             if(gamepad1.a)
+             {
+                 if(cycle)
+                     BlueAutonomousLeft();
+                 else
+                     AutoNoCycle();
+
+                 chosen = "Blue Left; Cycle: " + cycle;
+             }
+
              if(gamepad1.b)
              {
                  if(cycle)
@@ -45,14 +60,27 @@ import java.util.ArrayList;
                  else
                      AutoNoCycle();
 
-                 chosen = "Auto: Right; Cycle: True";
+                 chosen = "Blue Right; Cycle: " + cycle;
              }
+
              if(gamepad1.x)
              {
-                 cycle = true;
-                 RedAutonomousLeft();
+                 if(cycle)
+                     RedAutonomousLeft();
+                 else
+                     AutoNoCycle();
 
-                 chosen = "Auto: Left; Cycle: True";
+                 chosen = "Red Left; Cycle: " + cycle;
+             }
+
+             if(gamepad1.y)
+             {
+                 if(cycle)
+                     RedAutonomousRight();
+                 else
+                     AutoNoCycle();
+
+                 chosen = "Red Right; Cycle: " + cycle;
              }
 
              target = robot.GetTargetLocation();
@@ -69,16 +97,17 @@ import java.util.ArrayList;
          SlidePosition pos = SlidePosition.LOW;
 
          //choose index to insert the parking code
+         int index = cycle ? 20 : 3;
 
          //remove if statement when ready to write parking code
-         if(!cycle) {
+         if(index == 3) {
              if (target == 1)
-                 states.add(3, robot.new DriveDistancePID(850, -90, 0.35, 5000, 1));
+                 states.add(index, robot.new DriveDistancePID(850, -90, 0.35, 5000, 1));
              if (target == 2) {
                  //add nothing
              }
              if (target == 3)
-                 states.add(3, robot.new DriveDistancePID(850, 90, 0.35, 5000, 1));
+                 states.add(index, robot.new DriveDistancePID(850, 90, 0.35, 5000, 1));
          }
          else
          {
@@ -152,6 +181,7 @@ import java.util.ArrayList;
          states.add(robot.new DriveDistancePID(900, 0, 0.35, 5000, 1));
          states.add(robot.new TurnGyroPID(0.2, 0, 1000, 1, false));
      }
+     private void BlueAutonomousLeft()
      {
          states = new ArrayList<State>();
 
@@ -192,51 +222,38 @@ import java.util.ArrayList;
      private void BlueAutonomousRight()
      {
          states = new ArrayList<State>();
+
          //first drive
-         states.add(robot.new DriveDistancePID(900, 0, 0.4, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new TurnGyroPID(1, -18, 2, 1, false));
-         states.add(robot.new DriveDistancePID(25, 0, 0.3, 5000, 1));
-         states.add(robot.new TurnColor(robot.slideColourSensor, -1, 0.05, 1, false));
-         states.add(robot.new DriveDistancePID(30, 0, 0.5, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.2));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new DriveDistancePID(100, 180, 0.4, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.GROUND));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));
-         states.add(robot.new DriveDistancePID(330, 0, 0.5, 5000, 1));
-         states.add(robot.new TurnGyroPID(0.3, -90, 5, 1, false));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
-         states.add(robot.new SetClaw(true));
+         states.add(robot.new DriveDistancePID(90, 0, 0.3, 5000, 1));
 
-         states.add(robot.new DriveDistancePID(470, 180, 0.5, 5000, 1));
-         states.add(robot.new DriveDistancePID(90, 0, 0.5, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN4));
-         states.add(robot.new DriveDistancePID(90, 180, 0.5, 5000, 1));
-         states.add(robot.new SetClaw(false));
-         states.add(robot.new Wait(0.6));
+         //drive right / left depending on side
+         states.add(robot.new DriveDistancePID(670, 270, 0.3, 5000, 1));
 
-         states.add(robot.new SetSlidePosition(SlidePosition.LOW));
-         states.add(robot.new TurnGyroPID(1, -75, 2, 1, false));
-         states.add(robot.new DriveDistancePID(128, 0, 0.5, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(1));
-         states.add(robot.new TurnColor(robot.slideColourSensor, 1, 0.05, 1, false));
-         states.add(robot.new DriveDistancePID(30, 0, 0.5, 5000, 1));
+         states.add(robot.new DriveDistancePID(550, 0, 0.3, 5000, 1));
 
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new DriveDistancePID(60, 180, 0.3, 5000, 1));
+         //slide height is here
+         states.add(robot.new Wait(1f));
+         states.add(robot.new Wait(1.5f));
+         states.add(robot.new Wait(0.75));
          states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));
+         states.add(robot.new DriveDistancePID(150, 180, 0.75, 5, 1));
+
+         //go to carousel
+         states.add(robot.new TurnGyroPID(1, 270, 2, 1, false));
+         states.add(robot.new DriveDistancePID( 800, 180, 0.8, 5, 1));
+         states.add(robot.new DriveDistanceColor( robot.slideColourSensor, 180, 0.2, 1450, false));
+         states.add(robot.new DriveDistancePID( 175, 180, 0.2, 5, 1));
+         states.add(robot.new DriveDistanceColor(robot.slideColourSensor, 270, 0.2, 130, false));
+         states.add(robot.new DriveDistancePID(270, 270, 0.5, 2, 1));
+         states.add(robot.new DriveDistancePID(30, 270, 0.1, 2, 1));
+         states.add(robot.new Wait(3));
+         states.add(robot.new DriveDistancePID(310, 90, 0.5, 5, 1));
+
+         //park
+         states.add(robot.new TurnGyroPID(1, 270, 2, 1, false));
+         states.add(robot.new DriveDistancePID(2200, 0, 1, 8, 1));
+         //states.add(robot.new TurnGyroPID(1, 270, 2, 1, false));
+         states.add(robot.new DriveDistancePID(650, 0, 1, 8, 1));
 
      }
 
@@ -244,23 +261,24 @@ import java.util.ArrayList;
      {
          states = new ArrayList<State>();
          //first drive
-         states.add(robot.new DriveDistancePID(900, 0, 0.4, 5000, 1));
+         states.add(robot.new DriveDistancePID(900, 0, 0.3, 5000, 1));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
          states.add(robot.new ArmToPosition(true));
          states.add(robot.new TurnGyroPID(1, 18, 2, 1, false));
          states.add(robot.new DriveDistancePID(25, 0, 0.3, 5000, 1));
          states.add(robot.new TurnColor(robot.slideColourSensor, 1, 0.05, 1, false));
          states.add(robot.new DriveDistancePID(30, 0, 0.5, 5000, 1));
+
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.2));
+         states.add(robot.new Wait(1));
          states.add(robot.new SetClaw(true));
          states.add(robot.new Wait(0.5));
-         states.add(robot.new DriveDistancePID(100, 180, 0.4, 5000, 1));
+         states.add(robot.new DriveDistancePID(100, 180, 0.3, 5000, 1));
          states.add(robot.new SetSlidePosition(SlidePosition.GROUND));
          states.add(robot.new Wait(0.3));
          states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));
          states.add(robot.new DriveDistancePID(330, 0, 0.5, 5000, 1));
-         states.add(robot.new TurnGyroPID(0.3, 90, 5, 1, false));
+         states.add(robot.new TurnGyroPID(0.1, 90, 5, 1, false));
          states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
          states.add(robot.new SetClaw(true));
 
@@ -281,7 +299,7 @@ import java.util.ArrayList;
          states.add(robot.new DriveDistancePID(30, 0, 0.5, 5000, 1));
 
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.5));
+         states.add(robot.new Wait(1));
          states.add(robot.new SetClaw(true));
          states.add(robot.new Wait(0.3));
          states.add(robot.new DriveDistancePID(60, 180, 0.3, 5000, 1));
@@ -301,7 +319,33 @@ import java.util.ArrayList;
 
      }
 
+     private void RedAutonomousRight()
+     {
+         states = new ArrayList<State>();
 
+         states.add(robot.new Wait(delay));
+
+         //first drive
+         states.add(robot.new DriveDistancePID(90, 0, 0.3, 5000, 1));
+
+         //drive right / left depending on side
+         states.add(robot.new DriveDistancePID(670, 270, 0.3, 5000, 1));
+
+         states.add(robot.new DriveDistancePID(550, 0, 0.3, 5000, 1));
+
+         //slide height is here
+         states.add(robot.new Wait(1f));
+         states.add(robot.new Wait(1.5f));
+         states.add(robot.new Wait(0.75));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+         states.add(robot.new DriveDistancePID(75, 180, 0.75, 5, 1));
+
+         //park
+         states.add(robot.new TurnGyroPID(1, 90, 2, 1, false));
+         states.add(robot.new DriveDistancePID(1500, 0, 1, 8, 1));
+
+
+     }
 
 
  }

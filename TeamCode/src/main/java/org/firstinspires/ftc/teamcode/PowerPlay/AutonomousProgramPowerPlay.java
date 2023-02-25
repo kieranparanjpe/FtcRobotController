@@ -27,6 +27,7 @@ import java.util.ArrayList;
          telemetry.addData("Status", "Initializing");
          telemetry.update();
 
+
          robot = new RobotPowerPlay(hardwareMap, this);
 
 
@@ -40,11 +41,8 @@ import java.util.ArrayList;
          {
              if(gamepad1.b)
              {
-                 if(cycle)
-                     BlueAutonomousRight();
-                 else
-                     AutoNoCycle();
-
+                 cycle = true;
+                 BlueAutonomousRight();
                  chosen = "Auto: Right; Cycle: True";
              }
              if(gamepad1.x)

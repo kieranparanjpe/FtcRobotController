@@ -91,7 +91,7 @@ import java.util.ArrayList;
          else
          {
              if (target == 1)
-                 states.add(robot.new DriveDistancePID(80, -90, 0.35, 5000, 1));
+                 states.add(robot.new DriveDistancePID(150, -90, 0.35, 5000, 1));
              if (target == 2) {
                  states.add(robot.new DriveDistancePID(300, 90, 0.35, 5000, 1));
              }

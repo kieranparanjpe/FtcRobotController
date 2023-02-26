@@ -7,6 +7,12 @@ import org.firstinspires.ftc.teamcode.Global.RobotPowerPlay;
 import org.firstinspires.ftc.teamcode.Global.SlidePosition;
 import org.firstinspires.ftc.teamcode.Global.State;
 
+import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter; // Import the FileWriter class
+import java.io.IOException;
+
 import java.util.ArrayList;
 
  @Autonomous(name = "Autonomous Power Play", group = "Autonomous")
@@ -16,6 +22,7 @@ import java.util.ArrayList;
 
      private ArrayList<State> states = new ArrayList<State>();
      private ArrayList<State> asyncStates = new ArrayList<State>();
+
 
      //in seconds
      int delay = 0;
@@ -140,6 +147,19 @@ import java.util.ArrayList;
              // telemetry.addLine("Progress: " + progress);
              telemetry.update();
          }
+
+         try {
+             FileWriter myWriter = new FileWriter("slidePositions.txt");
+             myWriter.write(robot.slideMotor1.getCurrentPosition() + "\n");
+             myWriter.write(robot.slideMotor2.getCurrentPosition());
+             myWriter.close();
+
+         } catch (IOException e) {
+                 e.printStackTrace();
+         }
+
+             // System.out.println("Successfully wrote to the file.");
+
      }
      private void AutoNoCycle()
      {

@@ -11,6 +11,16 @@ import org.firstinspires.ftc.teamcode.Global.RobotPowerPlay;
 import org.firstinspires.ftc.teamcode.Global.SlidePosition;
 import org.firstinspires.ftc.teamcode.UltimateGoal.DriveControlState;
 
+
+import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter; // Import the FileWriter class
+import java.io.IOException;
+
+import java.io.InputStream;
+import android.content.Context;
+
 @Config
 @TeleOp(name="Driver Control PP", group="TeleOp")
 public class DriverMode extends LinearOpMode
@@ -44,6 +54,19 @@ public class DriverMode extends LinearOpMode
         //region init
         telemetry.addData("Status", "Initializing");
         telemetry.update();
+
+            try {
+                File file = new File("slidePositions.txt");
+                Scanner scanner = new Scanner(file);
+                String line = "";
+                robot.leftSlideOffset = -scanner.nextInt();
+                robot.rightSlideOffset = -scanner.nextInt();
+                scanner.close();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
 
         dashboard = FtcDashboard.getInstance();
 
@@ -156,8 +179,15 @@ public class DriverMode extends LinearOpMode
 
             if(attachmentController == gamepad2 && attachmentController.left_stick_y != 0)
             {
-                robot.slideMotor1.setPower(attachmentController.left_stick_y);
-                robot.slideMotor2.setPower(attachmentController.left_stick_y);
+                robot.slideMotor1.setPower(-attachmentController.left_stick_y * 0.2);
+                robot.slideMotor2.setPower(-attachmentController.left_stick_y * 0.2);
+
+                if(attachmentController.a)
+                {
+                    robot.leftSlideOffset = robot.slideMotor1.getCurrentPosition();
+                    robot.rightSlideOffset = robot.slideMotor2.getCurrentPosition();
+
+                }
             }
             else
             {
@@ -222,7 +252,15 @@ public class DriverMode extends LinearOpMode
             telemetry.update();
         }
 
-        
+        try {
+            FileWriter myWriter = new FileWriter("slidePositions.txt");
+            myWriter.write(robot.slideMotor1.getCurrentPosition() + "\n");
+            myWriter.write(robot.slideMotor2.getCurrentPosition());
+            myWriter.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //Drive forward
     }
 

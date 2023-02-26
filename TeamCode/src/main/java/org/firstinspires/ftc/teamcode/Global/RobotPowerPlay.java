@@ -78,6 +78,9 @@ public  class RobotPowerPlay {
     private final int leftThreshHold = 650, rightThreshHold = 1300;
     public int targetBarcode = 2;
 
+    public int leftSlideOffset = 0;
+    public int rightSlideOffset = 0;
+
     // region Init
 
     public RobotPowerPlay(HardwareMap hardwareMap, LinearOpMode opMode)
@@ -886,13 +889,13 @@ public  class RobotPowerPlay {
     public double SlideToPosition(SlidePosition target, double accuaracy)
     {
         int targetHeight = slidePositions.get(slidePosition);
-        int current = (slideMotor1.getCurrentPosition() + slideMotor2.getCurrentPosition())/2;
+        int current = (slideMotor1.getCurrentPosition() + leftSlideOffset + slideMotor2.getCurrentPosition() + rightSlideOffset)/2;
 
-        if(targetHeight >= current || armServo1.servo.getPosition() > armServo1.startPosition - 0.05) {
+        if(targetHeight + leftSlideOffset >= current || armServo1.servo.getPosition() > armServo1.startPosition - 0.05) {
 
 
-           double powerRight = rightSlidePID.Compute(slidePositions.get(target), slideMotor2.getCurrentPosition());
-           double powerLeft = leftSlidePID.Compute(slidePositions.get(target), slideMotor1.getCurrentPosition());
+           double powerRight = rightSlidePID.Compute(slidePositions.get(target) + rightSlideOffset, slideMotor2.getCurrentPosition());
+           double powerLeft = leftSlidePID.Compute(slidePositions.get(target) + leftSlideOffset, slideMotor1.getCurrentPosition());
 
 
             if (Math.abs(powerRight) < 0.02)
@@ -930,7 +933,7 @@ public  class RobotPowerPlay {
             return;
 
         int targetHeight = slidePositions.get(slidePosition);
-        int current = (slideMotor1.getCurrentPosition() + slideMotor2.getCurrentPosition())/2;
+        int current = (slideMotor1.getCurrentPosition() + rightSlideOffset + leftSlideOffset + slideMotor2.getCurrentPosition())/2;
 
 
        // if(slideMotor2.getCurrentPosition() < 800 && current >= 800)

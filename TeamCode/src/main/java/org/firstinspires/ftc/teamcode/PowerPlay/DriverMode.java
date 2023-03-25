@@ -55,19 +55,6 @@ public class DriverMode extends LinearOpMode
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
-            try {
-                File file = new File("slidePositions.txt");
-                Scanner scanner = new Scanner(file);
-                String line = "";
-                robot.leftSlideOffset = -scanner.nextInt();
-                robot.rightSlideOffset = -scanner.nextInt();
-                scanner.close();
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-
         dashboard = FtcDashboard.getInstance();
 
         attachmentController = gamepad2;
@@ -243,24 +230,18 @@ public class DriverMode extends LinearOpMode
             }
 
             //endregion
+            telemetry.addData("Lateral Position", robot.rightFront.getCurrentPosition());
+            telemetry.addData("Left Position", robot.deadWheel1.getCurrentPosition());
+            telemetry.addData("Right Position", robot.deadWheel2.getCurrentPosition());
+
             telemetry.addData("colour sensor dist: ", robot.slideColourSensor.Distance());
-            telemetry.addData("Servo Pos: ", robot.armServo1.servo.getPosition());
             telemetry.addLine("Slide Pos: " + robot.slideMotor2.getCurrentPosition());
             telemetry.addLine("Angle: " + robot.imuData.HeadingAngle());
-            telemetry.addData("Drive Type", driveState.toString());
             telemetry.addData("Runtime", robot.runtime.time());
             telemetry.update();
         }
 
-        try {
-            FileWriter myWriter = new FileWriter("slidePositions.txt");
-            myWriter.write(robot.slideMotor1.getCurrentPosition() + "\n");
-            myWriter.write(robot.slideMotor2.getCurrentPosition());
-            myWriter.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         //Drive forward
     }
 

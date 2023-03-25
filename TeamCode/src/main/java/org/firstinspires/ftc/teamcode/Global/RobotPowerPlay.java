@@ -36,6 +36,8 @@ public  class RobotPowerPlay {
     public DcMotorEx rightFront = null;
     public DcMotorEx leftBack = null;
     public DcMotorEx rightBack = null;
+    public DcMotor deadWheel1 = null;
+    public DcMotor deadWheel2 = null;
 
     private IMUData imu;
     private LinearOpMode linearOpMode;
@@ -110,6 +112,8 @@ public  class RobotPowerPlay {
 
                 , linearOpMode.telemetry);
 
+        deadWheel1 = hardwareMap.get(DcMotor.class, "DeadWheelLeft");
+        deadWheel2 = hardwareMap.get(DcMotor.class, "DeadWheelRight");
 
         slideMotor1 = hardwareMap.get(DcMotorEx.class, "SlideMotor1");
         slideMotor2 = hardwareMap.get(DcMotorEx.class, "SlideMotor2");
@@ -126,14 +130,19 @@ public  class RobotPowerPlay {
 
         slideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         slideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         slideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        deadWheel1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        deadWheel1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        deadWheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        deadWheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imuData = new IMUData("imu", hardwareMap);
 
@@ -153,7 +162,7 @@ public  class RobotPowerPlay {
         slidePositions.put(SlidePosition.GROUND, 67); //100
         slidePositions.put(SlidePosition.LOW, 733); //1100
         slidePositions.put(SlidePosition.MID, 1332); //2000
-        slidePositions.put(SlidePosition.HIGH, 2100); // 2064 -- original: 3100
+        slidePositions.put(SlidePosition.HIGH, 2050); // 2064 -- original: 3100
 
 
         armPositions.put(SlidePosition.DOWN, 0.86);
@@ -886,12 +895,22 @@ public  class RobotPowerPlay {
 
     //region Attachments
 
+    private double slideTimerWait;
+    private int lastSlideTarget = 0;
+
     public double SlideToPosition(SlidePosition target, double accuaracy)
     {
         int targetHeight = slidePositions.get(slidePosition);
         int current = (slideMotor1.getCurrentPosition() + leftSlideOffset + slideMotor2.getCurrentPosition() + rightSlideOffset)/2;
 
-        if(targetHeight + leftSlideOffset >= current || armServo1.servo.getPosition() > armServo1.startPosition - 0.05) {
+        if(targetHeight != lastSlideTarget)
+            slideTimerWait = runtime.milliseconds();
+
+        lastSlideTarget = targetHeight;
+
+        //only do if: on way up from not ground, on way down must wait, on way up from ground must wait
+
+        if((targetHeight + leftSlideOffset >= current && current > 500) || runtime.milliseconds() - slideTimerWait > 500.0) {
 
 
            double powerRight = rightSlidePID.Compute(slidePositions.get(target) + rightSlideOffset, slideMotor2.getCurrentPosition());

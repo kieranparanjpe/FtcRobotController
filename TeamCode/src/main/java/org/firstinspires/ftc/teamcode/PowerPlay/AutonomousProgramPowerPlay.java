@@ -93,10 +93,13 @@ import java.util.ArrayList;
              if (target == 1)
                  states.add(robot.new DriveDistancePID(150, -90, 0.35, 5000, 1));
              if (target == 2) {
-                 states.add(robot.new DriveDistancePID(300, 90, 0.35, 5000, 1));
+                 states.add(robot.new DriveDistancePID(410, 90, 0.35, 5000, 1));
              }
-             if (target == 3)
-                 states.add(robot.new DriveDistancePID(900, 90, 0.35, 5000, 1));
+             if (target == 3) {
+                 states.add(robot.new TurnGyroPID(0.3, 90, 4, 1, false));
+
+                 states.add(robot.new DriveDistancePID(1575, 0, 0.35, 5000, 1));
+             }
          }
 
          robot.runtime.reset();
@@ -182,47 +185,17 @@ import java.util.ArrayList;
          states.add(robot.new DriveDistancePID(900, 0, 0.4, 5000, 1));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
          states.add(robot.new ArmToPosition(true));
-         states.add(robot.new TurnGyroPID(1, 18, 2, 1, false));
+         states.add(robot.new TurnGyroPID(1, -18, 2, 1, false));
          states.add(robot.new DriveDistancePID(25, 0, 0.3, 5000, 1));
-         states.add(robot.new TurnColor(robot.slideColourSensor, 1, 0.05, 1, false));
-         states.add(robot.new DriveDistancePID(30, 0, 0.5, 5000, 1));
-
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.4));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new DriveDistancePID(100, 180, 0.4, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.GROUND));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));
-         states.add(robot.new DriveDistancePID(330, 0, 0.5, 5000, 1));
-         states.add(robot.new TurnGyroPID(0.4, 90, 5, 1, false));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
-         states.add(robot.new SetClaw(true));
-
-         states.add(robot.new DriveDistancePID(470, 180, 0.5, 5000, 1));
-         states.add(robot.new DriveDistancePID(90, 0, 0.5, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN4));
-         states.add(robot.new DriveDistancePID(90, 180, 0.5, 5000, 1));
-         states.add(robot.new SetClaw(false));
-         states.add(robot.new Wait(0.6));
-
-         states.add(robot.new SetSlidePosition(SlidePosition.LOW));
-         states.add(robot.new TurnGyroPID(1, 75, 2, 1, false));
-         states.add(robot.new DriveDistancePID(128, 0, 0.5, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(1));
          states.add(robot.new TurnColor(robot.slideColourSensor, -1, 0.05, 1, false));
          states.add(robot.new DriveDistancePID(30, 0, 0.5, 5000, 1));
 
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.5));
+         states.add(robot.new Wait(20));
          states.add(robot.new SetClaw(true));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new DriveDistancePID(60, 180, 0.3, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
-         states.add(robot.new Wait(0.3));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new DriveDistancePID(100, 180, 0.4, 5000, 1));
+         states.add(robot.new SetSlidePosition(SlidePosition.GROUND));
          states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));
 
 
@@ -273,10 +246,13 @@ import java.util.ArrayList;
          states.add(robot.new Wait(0.5));
          states.add(robot.new SetClaw(true));
          states.add(robot.new Wait(0.3));
-         states.add(robot.new DriveDistancePID(60, 180, 0.3, 5000, 1));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+         states.add(robot.new DriveDistancePID(80, 180, 0.3, 5000, 1));
+         states.add(robot.new SetSlidePosition(SlidePosition.GROUND));
+         states.add(robot.new ArmToPosition(true));
          states.add(robot.new Wait(0.3));
-         states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));
+         states.add(robot.new DriveDistancePID(25, 180, 0.3, 5000, 1));
+
+         states.add(robot.new TurnGyroPID(0.3, 0, 4, 1, false));
 
 
 

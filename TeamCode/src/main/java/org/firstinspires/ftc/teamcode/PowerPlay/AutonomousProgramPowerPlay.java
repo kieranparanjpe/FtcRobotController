@@ -163,6 +163,7 @@ import java.util.ArrayList;
 
              // System.out.println("Successfully wrote to the file.");
 
+
      }
      private void AutoNoCycle()
      {
@@ -204,6 +205,8 @@ import java.util.ArrayList;
      private void RedAutonomousLeft()
      {
          states = new ArrayList<State>();
+
+
          //first drive
          states.add(robot.new DriveDistancePID(900, 0, 0.4, 5000, 1));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
@@ -223,6 +226,8 @@ import java.util.ArrayList;
          states.add(robot.new TurnGyroPID(0.5, 0, 2, 1, false));
          states.add(robot.new DriveDistancePID(330, 0, 0.5, 5000, 1));
          states.add(robot.new TurnGyroPID(0.4, 90, 5, 1, false));
+         states.add(robot.new Wait(1));
+         states.add(robot.new SetClaw(true));
          states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
          states.add(robot.new SetClaw(true));
 

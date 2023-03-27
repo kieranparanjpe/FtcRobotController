@@ -231,8 +231,7 @@ public class DriverMode extends LinearOpMode
 
             //endregion
             telemetry.addData("Lateral Position", robot.rightFront.getCurrentPosition());
-            telemetry.addData("Left Position", robot.deadWheel1.getCurrentPosition());
-            telemetry.addData("Right Position", robot.deadWheel2.getCurrentPosition());
+
 
             telemetry.addData("colour sensor dist: ", robot.slideColourSensor.Distance());
             telemetry.addLine("Slide Pos: " + robot.slideMotor2.getCurrentPosition());

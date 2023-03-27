@@ -1,5 +1,7 @@
  package org.firstinspires.ftc.teamcode.PowerPlay;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -42,7 +44,8 @@ import java.util.ArrayList;
          boolean cycle = false;
          int target = 2;
 
-         AutoNoCycle();
+         //AutoNoCycle();
+         TestRR();
 
          while(!isStarted())
          {
@@ -138,6 +141,7 @@ import java.util.ArrayList;
 
              robot.SlideToPosition(robot.slidePosition, 1);
              robot.ArmToPosition();
+             robot.drive.update();
 
             // telemetry.addData("Distance driven ", distanceToHub);
             // robot.outerColorSensor.Color();
@@ -149,16 +153,6 @@ import java.util.ArrayList;
 
              // telemetry.addLine("Progress: " + progress);
              telemetry.update();
-         }
-
-         try {
-             FileWriter myWriter = new FileWriter("slidePositions.txt");
-             myWriter.write(robot.slideMotor1.getCurrentPosition() + "\n");
-             myWriter.write(robot.slideMotor2.getCurrentPosition());
-             myWriter.close();
-
-         } catch (IOException e) {
-                 e.printStackTrace();
          }
 
              // System.out.println("Successfully wrote to the file.");
@@ -176,6 +170,42 @@ import java.util.ArrayList;
          //insert drive left / right
          states.add(robot.new DriveDistancePID(900, 0, 0.35, 5000, 1));
          states.add(robot.new TurnGyroPID(0.2, 0, 1000, 1, false));
+     }
+
+     private void TestRR()
+     {
+         Trajectory trajectory1 = robot.drive.trajectoryBuilder(new Pose2d())
+                 .lineToLinearHeading(new Pose2d(50, 0, Math.toRadians(-20)))
+                 .build();
+
+         Trajectory trajectory2 = robot.drive.trajectoryBuilder(trajectory1.end())
+                 .lineToLinearHeading(new Pose2d(50, 24, Math.toRadians(-90)))
+                 .build();
+
+         Trajectory trajectory3 = robot.drive.trajectoryBuilder(trajectory2.end())
+                 .lineToLinearHeading(new Pose2d(50, 0, Math.toRadians(-20)))
+                 .build();
+
+         states = new ArrayList<State>();
+
+         states.add(robot.new Wait(delay));
+         //first drive
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory1, 5000, false));
+         states.add(robot.new Wait(delay));
+         states.add(robot.new Wait(delay));
+         states.add(robot.new Wait(delay));
+         states.add(robot.new Wait(delay));
+
+         /*states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));*/
+
+
      }
 
 

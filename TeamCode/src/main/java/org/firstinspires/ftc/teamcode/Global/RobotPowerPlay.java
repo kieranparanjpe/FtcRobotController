@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.opencv.core.Scalar;
 
 import java.io.File;
@@ -28,6 +31,8 @@ public  class RobotPowerPlay {
 
     public ElapsedTime runtime = new ElapsedTime();
 
+    public SampleMecanumDrive drive = null;
+
     private final double  encoderTicksPerRevolution = 751.6;
     private final double wheelCircumference = Math.PI * 96; //given in mm
     private final double encoderTickPerMM = encoderTicksPerRevolution / wheelCircumference;
@@ -36,8 +41,7 @@ public  class RobotPowerPlay {
     public DcMotorEx rightFront = null;
     public DcMotorEx leftBack = null;
     public DcMotorEx rightBack = null;
-    public DcMotor deadWheel1 = null;
-    public DcMotor deadWheel2 = null;
+
 
     private IMUData imu;
     private LinearOpMode linearOpMode;
@@ -94,15 +98,16 @@ public  class RobotPowerPlay {
 
     private void InitHardware(HardwareMap hardwareMap)
     {
+
         leftFront = hardwareMap.get(DcMotorEx.class, "LeftFront");
         rightFront = hardwareMap.get(DcMotorEx.class, "RightFront");
         leftBack = hardwareMap.get(DcMotorEx.class, "LeftBack");
         rightBack = hardwareMap.get(DcMotorEx.class, "RightBack");
 
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        //rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+       // leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+       // leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+      //  rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         SetMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         SetMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -112,8 +117,6 @@ public  class RobotPowerPlay {
 
                 , linearOpMode.telemetry);
 
-        deadWheel1 = hardwareMap.get(DcMotor.class, "DeadWheelLeft");
-        deadWheel2 = hardwareMap.get(DcMotor.class, "DeadWheelRight");
 
         slideMotor1 = hardwareMap.get(DcMotorEx.class, "SlideMotor1");
         slideMotor2 = hardwareMap.get(DcMotorEx.class, "SlideMotor2");
@@ -138,15 +141,12 @@ public  class RobotPowerPlay {
         slideMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        deadWheel1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        deadWheel1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        deadWheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        deadWheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         imuData = new IMUData("imu", hardwareMap);
 
        webcamPipeline = new WebcamAprilTags(hardwareMap, linearOpMode.telemetry);
+
+        drive = new SampleMecanumDrive(hardwareMap);
+
         //webcamData = new WebcamData(hardwareMap, linearOpMode.telemetry);
         /*if(linearOpMode.getClass() != DriverControl.class)
             targetBarcode = WebcamSetup(hardwareMap);*/
@@ -193,7 +193,7 @@ public  class RobotPowerPlay {
     public void SetMode(DcMotor.RunMode runMode)
     {
         leftFront.setMode(runMode);
-        rightFront.setMode(runMode);
+       // rightFront.setMode(runMode);
         leftBack.setMode(runMode);
         rightBack.setMode(runMode);
     }
@@ -888,6 +888,47 @@ public  class RobotPowerPlay {
         public double Run() {
             pincherServo.SetPosition(state);
             return 1.5;
+        }
+    }
+
+    //endregion
+
+    //region Road Runner
+    public class RoadRunnerFollowTrajectory extends State
+    {
+        Trajectory myTrajectory;
+        double timeoutRedundancy;
+
+        public RoadRunnerFollowTrajectory(Trajectory myTrajectory, double timeoutRedundancy, boolean async)
+        {
+            runAsync = async;
+            this.myTrajectory = myTrajectory;
+            this.timeoutRedundancy = timeoutRedundancy;
+        }
+
+        @Override
+        public double Run() {
+            if (progress == 0) {
+                progress = 0.01;
+                timeStarted = runtime.seconds();
+              //  SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                drive.followTrajectoryAsync(myTrajectory);
+            } else if (progress < 1) {
+                if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && drive.isBusy()) {
+                    //drive.followTrajectoryAsync(myTrajectory);
+                    linearOpMode.telemetry.update();
+                } else {
+                    progress = 1.5;
+                }
+            }
+            if (progress >= 1) {
+                linearOpMode.telemetry.addLine("Motors: Complete");
+
+                linearOpMode.telemetry.update();
+
+                SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            return progress;
         }
     }
 

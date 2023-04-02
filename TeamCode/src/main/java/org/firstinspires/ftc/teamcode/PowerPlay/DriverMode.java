@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.Global.OdometryBot;
 import org.firstinspires.ftc.teamcode.Global.RobotPowerPlay;
 import org.firstinspires.ftc.teamcode.Global.SlidePosition;
 import org.firstinspires.ftc.teamcode.UltimateGoal.DriveControlState;
@@ -28,7 +29,7 @@ public class DriverMode extends LinearOpMode
     //change to gamepad2 for 2 drivers
     private Gamepad attachmentController;
 
-    private RobotPowerPlay robot = null;
+    private OdometryBot robot = null;
 
     private DriveControlState driveState = DriveControlState.DRIVING;
 
@@ -59,7 +60,7 @@ public class DriverMode extends LinearOpMode
 
         attachmentController = gamepad2;
 
-        robot = new RobotPowerPlay(hardwareMap, this);
+        robot = new OdometryBot(hardwareMap, this);
         robot.dropArm = false;
 
         // Tell the driver that initialization is complete.
@@ -74,6 +75,7 @@ public class DriverMode extends LinearOpMode
 
         while(opModeIsActive()) {
 
+            robot.onTick();
             //region driving
             //also had to comment out this to press play with sensors unplugged, remove when necessary
           /*  robot.bucketColorSensor.Color();

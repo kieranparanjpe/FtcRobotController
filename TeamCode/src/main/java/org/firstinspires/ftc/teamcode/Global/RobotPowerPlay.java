@@ -34,9 +34,9 @@ public  class RobotPowerPlay {
 
     public SampleMecanumDrive drive = null;
 
-    private final double  encoderTicksPerRevolution = 751.6;
-    private final double wheelCircumference = Math.PI * 96; //given in mm
-    private final double encoderTickPerMM = encoderTicksPerRevolution / wheelCircumference;
+    protected final double  encoderTicksPerRevolution = 751.6;
+    protected final double wheelCircumference = Math.PI * 96; //given in mm
+    protected final double encoderTickPerMM = encoderTicksPerRevolution / wheelCircumference;
 
     public DcMotorEx leftFront = null;
     public DcMotorEx rightFront = null;
@@ -44,8 +44,8 @@ public  class RobotPowerPlay {
     public DcMotorEx rightBack = null;
 
 
-    private IMUData imu;
-    private LinearOpMode linearOpMode;
+    protected IMUData imu;
+    protected LinearOpMode linearOpMode;
 
     public IMUData imuData = null;
 
@@ -60,29 +60,29 @@ public  class RobotPowerPlay {
     public PIDController rightSlidePID = new PIDController(0.001, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
     public PIDController leftSlidePID = new PIDController(0.001, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
 
-    private PIDController lFPID = new PIDController(0.001, 0.000, 0.0000);
-    private PIDController rFPID = new PIDController(0.001, 0.000, 0.0000);
-    private PIDController lBPID = new PIDController(0.001, 0.000, 0.0000);
-    private PIDController rBPID = new PIDController(0.001, 0.000, 0.000);
-    private GyroPIDController gyroPID = new GyroPIDController(0.5, 0, 0);
+    protected PIDController lFPID = new PIDController(0.001, 0.000, 0.0000);
+    protected PIDController rFPID = new PIDController(0.001, 0.000, 0.0000);
+    protected PIDController lBPID = new PIDController(0.001, 0.000, 0.0000);
+    protected PIDController rBPID = new PIDController(0.001, 0.000, 0.000);
+    protected GyroPIDController gyroPID = new GyroPIDController(0.5, 0, 0);
 
-    private final double maxSlideSpeed = 1;
-    private final double pincherLightOpen = 0.275;
-    private final double pincherHardOpen = 0.175;
+    protected final double maxSlideSpeed = 1;
+    protected final double pincherLightOpen = 0.275;
+    protected final double pincherHardOpen = 0.175;
 
     public SlidePosition slidePosition = SlidePosition.DOWN;
-    private final Hashtable<SlidePosition, Integer> slidePositions = new Hashtable<SlidePosition, Integer>();
-    private final Hashtable<SlidePosition, Double> armPositions = new Hashtable<SlidePosition, Double>();
+    protected final Hashtable<SlidePosition, Integer> slidePositions = new Hashtable<SlidePosition, Integer>();
+    protected final Hashtable<SlidePosition, Double> armPositions = new Hashtable<SlidePosition, Double>();
     public boolean dropArm = false;
 
 
-    private WebcamData webcamData;
-    private OpenCVPipeline openCVPipeline;
-    WebcamAprilTags webcamPipeline;
+    protected WebcamData webcamData;
+    protected OpenCVPipeline openCVPipeline;
+    protected WebcamAprilTags webcamPipeline;
 
-    private final int hueLow = 167, hueHigh = 235, satLow = 128, satHigh = 255, valLow = 60, valHigh = 255; // colour ranges, 0 - 255
-    private final int leftX = 0, topY = 350, rightX = 1920, bottomY = 850; //coords in picture to look at (doesnt need to process the edges. eg: dont check the walls)
-    private final int leftThreshHold = 650, rightThreshHold = 1300;
+    protected final int hueLow = 167, hueHigh = 235, satLow = 128, satHigh = 255, valLow = 60, valHigh = 255; // colour ranges, 0 - 255
+    protected final int leftX = 0, topY = 350, rightX = 1920, bottomY = 850; //coords in picture to look at (doesnt need to process the edges. eg: dont check the walls)
+    protected final int leftThreshHold = 650, rightThreshHold = 1300;
     public int targetBarcode = 2;
 
     public int leftSlideOffset = 0;

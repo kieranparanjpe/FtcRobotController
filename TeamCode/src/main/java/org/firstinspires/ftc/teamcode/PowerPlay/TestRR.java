@@ -7,13 +7,22 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Global.RobotPowerPlay;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 
 @Autonomous(name = "Test RR", group = "Autonomous")
 public class TestRR  extends LinearOpMode {
+
+    ElapsedTime time = new ElapsedTime();
+
+
+    RobotPowerPlay robot;
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        //SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        robot = new RobotPowerPlay(hardwareMap, this);
+
+        SampleMecanumDrive drive = robot.drive;
 
         Trajectory trajectory1 = drive.trajectoryBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(50, 0, Math.toRadians(-20)))
@@ -32,10 +41,13 @@ public class TestRR  extends LinearOpMode {
         drive.followTrajectoryAsync(trajectory1);
 
         ElapsedTime t = new ElapsedTime();
-
+time.reset();
         while(opModeIsActive() && drive.isBusy()) {
             telemetry.addData("Time", t.milliseconds());
 drive.update();
+telemetry.addData("cycle", time.milliseconds());
+time.reset();
+sleep(20);
             telemetry.update();
         }
     }

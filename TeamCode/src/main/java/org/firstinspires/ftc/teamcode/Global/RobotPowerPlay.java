@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Scalar;
 
 import java.io.File;
@@ -109,8 +110,8 @@ public  class RobotPowerPlay {
        // leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
       //  rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        SetMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        SetMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+       // SetMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        //SetMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         slideColourSensor = new ColorSensor(hardwareMap.get(RevColorSensorV3.class, "SlideSensor"),
                 new ColourRange[] { new ColourRange(new Scalar(140, 100, 0), new Scalar(260, 260, 260)), new ColourRange(new Scalar(0, 100, 0), new Scalar(40, 260, 260))}
@@ -173,8 +174,8 @@ public  class RobotPowerPlay {
 
         armPositions.put(SlidePosition.GROUND, 0.5);
         armPositions.put(SlidePosition.LOW, 0.12); //400
-        armPositions.put(SlidePosition.MID, 0.2); //800
-        armPositions.put(SlidePosition.HIGH, 0.2);
+        armPositions.put(SlidePosition.MID, 0.12); //800
+        armPositions.put(SlidePosition.HIGH, 0.12);
 
     }
 
@@ -909,14 +910,14 @@ public  class RobotPowerPlay {
         @Override
         public double Run() {
             if (progress == 0) {
+                drive.followTrajectoryAsync(myTrajectory);
+
                 progress = 0.01;
                 timeStarted = runtime.seconds();
               //  SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                drive.followTrajectoryAsync(myTrajectory);
             } else if (progress < 1) {
                 if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && drive.isBusy()) {
                     //drive.followTrajectoryAsync(myTrajectory);
-                    linearOpMode.telemetry.update();
                 } else {
                     progress = 1.5;
                 }
@@ -925,8 +926,78 @@ public  class RobotPowerPlay {
                 linearOpMode.telemetry.addLine("Motors: Complete");
 
                 linearOpMode.telemetry.update();
+            }
+            return progress;
+        }
+    }
 
-                SetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public class RoadRunnerFollowTrajectorySequence extends State
+    {
+        TrajectorySequence myTrajectory;
+        double timeoutRedundancy;
+
+        public RoadRunnerFollowTrajectorySequence(TrajectorySequence myTrajectory, double timeoutRedundancy, boolean async)
+        {
+            runAsync = async;
+            this.myTrajectory = myTrajectory;
+            this.timeoutRedundancy = timeoutRedundancy;
+        }
+
+        @Override
+        public double Run() {
+            if (progress == 0) {
+                drive.followTrajectorySequenceAsync(myTrajectory);
+
+                progress = 0.01;
+                timeStarted = runtime.seconds();
+                //  SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            } else if (progress < 1) {
+                if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && drive.isBusy()) {
+                    //drive.followTrajectoryAsync(myTrajectory);
+                } else {
+                    progress = 1.5;
+                }
+            }
+            if (progress >= 1) {
+                linearOpMode.telemetry.addLine("Motors: Complete");
+
+                linearOpMode.telemetry.update();
+            }
+            return progress;
+        }
+    }
+
+    public class RoadRunnerTurn extends State
+    {
+        double angle;
+        double timeoutRedundancy;
+
+        public RoadRunnerTurn(double turnAngle, double timeoutRedundancy, boolean async)
+        {
+            runAsync = async;
+            angle = turnAngle;
+            this.timeoutRedundancy = timeoutRedundancy;
+        }
+
+        @Override
+        public double Run() {
+            if (progress == 0) {
+                drive.turnAsync(Math.toRadians(angle));
+
+                progress = 0.01;
+                timeStarted = runtime.seconds();
+                //  SetMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            } else if (progress < 1) {
+                if (linearOpMode.opModeIsActive() && runtime.seconds() - timeStarted < timeoutRedundancy && drive.isBusy()) {
+                    //drive.followTrajectoryAsync(myTrajectory);
+                } else {
+                    progress = 1.5;
+                }
+            }
+            if (progress >= 1) {
+                linearOpMode.telemetry.addLine("Motors: Complete");
+
+                linearOpMode.telemetry.update();
             }
             return progress;
         }
@@ -938,6 +1009,7 @@ public  class RobotPowerPlay {
 
     private double slideTimerWait;
     private int lastSlideTarget = 0;
+    private int lastSlidePosition = 0;
 
     public double SlideToPosition(SlidePosition target, double accuaracy)
     {
@@ -948,6 +1020,8 @@ public  class RobotPowerPlay {
             slideTimerWait = runtime.milliseconds();
 
         lastSlideTarget = targetHeight;
+
+        int deltaPosition = current - lastSlidePosition;
 
         //only do if: on way up from not ground, on way down must wait, on way up from ground must wait
 

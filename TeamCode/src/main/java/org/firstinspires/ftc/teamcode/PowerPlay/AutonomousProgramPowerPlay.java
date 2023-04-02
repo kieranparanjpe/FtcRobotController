@@ -1,13 +1,19 @@
  package org.firstinspires.ftc.teamcode.PowerPlay;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Global.RobotPowerPlay;
 import org.firstinspires.ftc.teamcode.Global.SlidePosition;
 import org.firstinspires.ftc.teamcode.Global.State;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequenceBuilder;
 
 import java.util.*;
 import java.io.File;
@@ -26,6 +32,8 @@ import java.util.ArrayList;
      private ArrayList<State> asyncStates = new ArrayList<State>();
 
 
+     ElapsedTime timer;
+
      //in seconds
      int delay = 0;
 
@@ -39,6 +47,8 @@ import java.util.ArrayList;
 
          robot = new RobotPowerPlay(hardwareMap, this);
 
+
+         timer = new ElapsedTime();
 
          String chosen = "Auto: default park";
          boolean cycle = false;
@@ -111,6 +121,8 @@ import java.util.ArrayList;
          State currentState = states.get(0);
          int step = 0;
 
+         timer.reset();
+
          while(opModeIsActive() && currentState != null)
          {
              if(currentState.runAsync)
@@ -128,6 +140,8 @@ import java.util.ArrayList;
              }
 
              double progress = currentState.Run();
+             robot.drive.update();
+
              telemetry.addData("Step ", step);
              telemetry.addData("Step progress ", currentState.getProgress());
              if(progress >= 1)
@@ -141,7 +155,8 @@ import java.util.ArrayList;
 
              robot.SlideToPosition(robot.slidePosition, 1);
              robot.ArmToPosition();
-             robot.drive.update();
+
+
 
             // telemetry.addData("Distance driven ", distanceToHub);
             // robot.outerColorSensor.Color();
@@ -150,7 +165,8 @@ import java.util.ArrayList;
 
              telemetry.addData("Target Zone", target);
 
-
+            telemetry.addData("Cycle Time", timer.milliseconds());
+            timer.reset();
              // telemetry.addLine("Progress: " + progress);
              telemetry.update();
          }
@@ -174,23 +190,71 @@ import java.util.ArrayList;
 
      private void TestRR()
      {
-         Trajectory trajectory1 = robot.drive.trajectoryBuilder(new Pose2d())
-                 .lineToLinearHeading(new Pose2d(50, 0, Math.toRadians(-20)))
-                 .build();
-
-         Trajectory trajectory2 = robot.drive.trajectoryBuilder(trajectory1.end())
-                 .lineToLinearHeading(new Pose2d(50, 24, Math.toRadians(-90)))
-                 .build();
-
-         Trajectory trajectory3 = robot.drive.trajectoryBuilder(trajectory2.end())
-                 .lineToLinearHeading(new Pose2d(50, 0, Math.toRadians(-20)))
-                 .build();
+         /*
+             TrajectorySequence trajectory1 = robot.drive.trajectorySequenceBuilder(new Pose2d())
+                     .lineToLinearHeading(new Pose2d(15, 0, Math.toRadians(90)))
+                     .lineToLinearHeading(new Pose2d(15, 15, Math.toRadians(180)))
+                     .lineToLinearHeading(new Pose2d(0, 15, Math.toRadians(270)))
+                     .lineToLinearHeading(new Pose2d(0, 0, Math.toRadians(0)))
+                     .build();
 
          states = new ArrayList<State>();
 
          states.add(robot.new Wait(delay));
          //first drive
+         states.add(robot.new RoadRunnerFollowTrajectorySequence(trajectory1, 150000, false));
+
+         states.add(robot.new Wait(delay));
+         states.add(robot.new Wait(delay));
+         states.add(robot.new Wait(delay));
+         states.add(robot.new Wait(delay));*/
+
+         Trajectory trajectory1 = robot.drive.trajectoryBuilder(new Pose2d())
+                 .lineToLinearHeading(new Pose2d(40, 0, Math.toRadians(-19)))
+                 .build();
+
+         TrajectorySequence trajectory2 = robot.drive.trajectorySequenceBuilder(trajectory1.end())
+                 .lineToConstantHeading(new Vector2d(49, 0))
+                 .lineToLinearHeading(new Pose2d(49, 20, Math.toRadians(-90)))
+                 .back(3)
+                 .build();
+
+     /*    Trajectory trajectory3 = robot.drive.trajectoryBuilder(trajectory2.end())
+                 .lineToLinearHeading(new Pose2d(47.5, 20, Math.toRadians(-90)))
+                 .build();*/
+
+        /* Trajectory trajectory3 = robot.drive.trajectoryBuilder(trajectory2.end().plus(new Pose2d(0, 0, Math.toRadians(71))))
+                 .lineToConstantHeading(new Vector2d(48, 20)
+//                         SampleMecanumDrive.getVelocityConstraint(2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+//                         SampleMecanumDrive.getAccelerationConstraint(2))
+                 )
+                 .build();*/
+
+
+         states = new ArrayList<State>();
+
+         states.add(robot.new Wait(delay));
+         //first drive
+      //  states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
+
          states.add(robot.new RoadRunnerFollowTrajectory(trajectory1, 5000, false));
+   //      states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+        /* states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(4));
+
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
+         states.add(robot.new Wait(1));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN4));
+         states.add(robot.new Wait(0.5));*/
+         states.add(robot.new RoadRunnerFollowTrajectorySequence(trajectory2, 10000, false));
+        // states.add(robot.new RoadRunnerTurn(-71, 5000, false));
+         //states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+
+
+
+
          states.add(robot.new Wait(delay));
          states.add(robot.new Wait(delay));
          states.add(robot.new Wait(delay));

@@ -136,20 +136,29 @@ public class DriverMode extends LinearOpMode
 
 
                 //Normal Driving
-                double leftY = -gamepad1.left_stick_y; //driving
-                double leftX = gamepad1.left_stick_x;
-                double rightX = gamepad1.right_stick_x; //turning
+//                double leftY = -gamepad1.left_stick_y; //driving
+//                double leftX = gamepad1.left_stick_x;
+//                double rightX = gamepad1.right_stick_x; //turning
+//
+//
+//                double leftBackPower = Range.clip(leftY - leftX + rightX, -driveSpeed, driveSpeed);
+//                double leftFrontPower = Range.clip(leftY + leftX + rightX, -driveSpeed, driveSpeed);//problem left x
+//                double rightBackPower = Range.clip(leftY + leftX - rightX, -driveSpeed, driveSpeed);
+//                double rightFrontPower = Range.clip(leftY - leftX - rightX, -driveSpeed, driveSpeed);
 
+                robot.driveByVector(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, 0.5);
 
-                double leftBackPower = Range.clip(leftY - leftX + rightX, -driveSpeed, driveSpeed);
-                double leftFrontPower = Range.clip(leftY + leftX + rightX, -driveSpeed, driveSpeed);//problem left x
-                double rightBackPower = Range.clip(leftY + leftX - rightX, -driveSpeed, driveSpeed);
-                double rightFrontPower = Range.clip(leftY - leftX - rightX, -driveSpeed, driveSpeed);
+                telemetry.addLine("left_x, " + gamepad1.left_stick_y);
+                telemetry.addLine("left_y, " + gamepad1.left_stick_x);
+                telemetry.addLine("right_x," + gamepad1.right_stick_x);
 
-                //telemetry.addLine("Power, " + leftBackPower);
-
-
-                robot.SetPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+//                telemetry.addLine("lB, " + leftBackPower);
+//                telemetry.addLine("lF, " + leftFrontPower);
+//                telemetry.addLine("rB, " + rightBackPower);
+//                telemetry.addLine("rF, " + rightFrontPower);
+//
+//
+//                robot.SetPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
             }
 
             //endregion

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.trajectorysequence.TrajectorySequence;
@@ -34,18 +35,20 @@ public class OdometryBot extends RobotPowerPlay {
     double savedXBlue, savedYBlue, savedThetaDEG;
     public double savedStartAngle;
 
+    private int gyroResetCounter = 0;
+
     final int vLDirection = 1;
     final int vRDirection = 1;
     final int hDirection = -1;
-    final double diameter = 18719; // actually diameter: 285/609 = d/40000
-    final double hDiameter = 17997; //diameter of horizontal encoder: 185*2/609 = hD/40000      24302
+    final double diameter = 5278; // actually diameter: 98/609 = d/32800
+    final double hDiameter = 808; //diameter of horizontal encoder: 15/609 = hD/32800      24302
     final double leftX = -(diameter/2); //134mm
     final double rightX = (diameter/2); //152mm
     final double hY = -(hDiameter/2); //137mm
 
     double vLOffset, vROffset, hOffset = 0;
 
-    public double previousVL = 0, previousVR = 0, previousH = 0;
+    public double previousVL = 0, previousVR = 0, previousH = 0, previousThetaRAD;
     double angleChange = 0;
 
     double drive;
@@ -59,8 +62,8 @@ public class OdometryBot extends RobotPowerPlay {
     public boolean isCoordinateDriving = false;
     public boolean isTurningInPlace = false;
 
-    MiniPID drivePID = new MiniPID(0.085, 0, 0);//i: 0.006 d: 0.06
-    MiniPID twistPID = new MiniPID(0.035, 0, 0);
+    MiniPID drivePID = new MiniPID(0.1, 0, 0);//i: 0.006 d: 0.06
+    MiniPID twistPID = new MiniPID(0.015, 0, 0);
 
     double globalTargetX = 0;
     double globalTargetY = 0;
@@ -112,29 +115,37 @@ public class OdometryBot extends RobotPowerPlay {
         double lC = vL - previousVL;
         double rC = vR - previousVR;
 
-        angleChange = ((lC - rC) / (Math.PI * diameter * 2) * 360);
-        angleChange = (lC - rC)/(rightX - leftX);
+//        linearOpMode.telemetry.addData("lC", lC);
+//        linearOpMode.telemetry.addData("rC", rC);
+
+        //angleChange = ((lC - rC) / (Math.PI * diameter * 2) * 360);
+        //angleChange = (lC - rC)/(rightX - leftX);
+        //linearOpMode.telemetry.addData("angleChange", angleChange);
 //        angleChange = (lC - rC)/(2 * diameter);
 //
 //        angleDEG = angleDEG + angleChange;
-        thetaRAD = thetaRAD - angleChange;
+        //thetaRAD = thetaRAD - angleChange;
+        thetaRAD = -imuData.HeadingAngleRAD();
         thetaDEG = Math.toDegrees(thetaRAD);
 
         //thetaDEG = getDeltaAngle();
 
-        //angleChange = angleDEG - previousThetaDEG;
+        angleChange = thetaRAD - previousThetaRAD;
 
-        hError = (lC - rC)/(diameter * 2) * hDiameter;
+        hError = (angleChange * hDiameter) / 2;
+
+        //linearOpMode.telemetry.addData("hError", hError);
 
         double hC = h - previousH;
+        //linearOpMode.telemetry.addData("hC", hC);
 
-        xRedChange = hC + hError;
+        xRedChange = hC - hError;
         //xRedChange = hC - (hY * angleChange);
         yRedChange = (lC + rC)/2;
         //yRedChange = ((lC * rightX) - (rC * leftX))/(rightX - leftX);
 
-        xBlueChange = Math.cos(thetaRAD - (Math.PI/2)) * xRedChange + Math.cos(thetaRAD) * yRedChange;
-        yBlueChange = Math.sin(thetaRAD) * yRedChange + Math.sin(thetaRAD - (Math.PI/2)) * xRedChange;
+        xBlueChange = Math.cos(-thetaRAD - (Math.PI/2)) * xRedChange + Math.cos(-thetaRAD) * yRedChange;
+        yBlueChange = Math.sin(-thetaRAD) * yRedChange + Math.sin(-thetaRAD - (Math.PI/2)) * xRedChange;
 //        xBlueChange = xRedChange * Math.cos(thetaRAD) + yRedChange * Math.sin(thetaRAD);
 //        yBlueChange = yRedChange * Math.cos(thetaRAD) + xRedChange * Math.sin(thetaRAD);
 
@@ -146,11 +157,18 @@ public class OdometryBot extends RobotPowerPlay {
         previousVL = vL;
         previousVR = vR;
         previousH = h;
-        //previousThetaDEG = angleDEG;
+        previousThetaRAD = thetaRAD;
+
+//        if (gyroResetCounter >= 9) {
+//            reAngle(0);
+//            gyroResetCounter = 0;
+//        }
+
+        gyroResetCounter++;
     }
 
     public void reAngle(double offset) {
-            thetaRAD = Math.toRadians(imu.HeadingAngle() + offset);
+            thetaRAD = -imuData.HeadingAngleRAD() + offset;
     }
 
 //    public void resetOdometry(boolean button) {
@@ -282,16 +300,18 @@ public class OdometryBot extends RobotPowerPlay {
         driveToCoordinate(xTarget, yTarget, targetTheta, tolerance, 1, magnitude, brake);
     }
 
-    public boolean driveToCoordinateUpdate(double xTarget, double yTarget, double targetTheta, int tolerance, double angleTol, double magnitude) {
-        drivePID.setOutputLimits(magnitude);
+    public boolean driveToCoordinateUpdate(double xTarget, double yTarget, double targetTheta, int tolerance, double angleTol, double bigMagnitude) {
+        drivePID.setOutputLimits(bigMagnitude);
         twistPID.setOutputLimits(0.6);
         thetaDifference = targetTheta - thetaDEG;
         twist = twistPID.getOutput(thetaDEG, targetTheta);
-        double rawDriveAngle = Math.toDegrees(Math.atan2(xTarget - xBlue, yTarget - yBlue));
-        driveAngle = -(rawDriveAngle - thetaDEG);
-        magnitude = Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/5000, 0))*2);
+        double rawDriveAngle = -Math.toDegrees(Math.atan2(xTarget - xBlue, yTarget - yBlue));
+        driveAngle = (rawDriveAngle - thetaDEG);
+        double magnitude = Math.min(bigMagnitude, Math.abs(drivePID.getOutput(distanceToTarget/3000, 0))*2);
         if (Math.abs(distanceToTarget) < 8000) {
-            magnitude = Math.max(0.15, Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/1500, 0))));
+            magnitude = Math.max(0.15, Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/800, 0))));
+            magnitude = Range.clip(Math.abs(drivePID.getOutput(distanceToTarget/2000, 0)), 0.15, 0.5);
+
         }
         if (xBlue > xTarget) {
             distanceToTarget = - Math.sqrt(Math.pow(xBlue - xTarget, 2) + Math.pow(yBlue - yTarget, 2));
@@ -299,15 +319,16 @@ public class OdometryBot extends RobotPowerPlay {
             distanceToTarget = Math.sqrt(Math.pow(xBlue - xTarget, 2) + Math.pow(yBlue - yTarget, 2));
         }
         drive = (Math.cos(Math.toRadians(driveAngle)) * magnitude);
-        strafe = Math.sin(Math.toRadians(driveAngle)) * magnitude;
+        strafe = Range.clip(Math.sin(Math.toRadians(driveAngle)) * magnitude * 1.3, 0, bigMagnitude);
 
-        driveByVector(drive, strafe, -twist, 1);
+        driveByVector(-drive, -strafe, twist, 1);
         RobotLog.d(String.format("BlueX: %f BlueY: %f Theta: %f Angle: %f Drive: %f Strafe: %f Twist: %f", xBlue, yBlue, thetaDEG, driveAngle, drive, strafe, twist));
         RobotLog.d(String.format("Distance: %f Magnitude: %f", distanceToTarget, magnitude));
 
         if ((xTarget + tolerance > xBlue) && (xTarget - tolerance < xBlue) && (yTarget + tolerance > yBlue) && (yTarget - tolerance < yBlue) && Math.abs(thetaDifference) < angleTol) {
             driveByVector(0, 0, 0, 1);
             RobotLog.d("TARGET REACHED");
+            isCoordinateDriving = false;
             return true;
 
         } else {
@@ -334,10 +355,14 @@ public class OdometryBot extends RobotPowerPlay {
         }
         //RobotLog.d(String.format("multiplier: %f speeds 0: %f", multiplier, speeds[0]));
         // apply the calculated values to the motors.
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearOpMode.telemetry.addData("lF", speeds[0] * multiplier);
+        linearOpMode.telemetry.addData("rF", speeds[1] * multiplier);
+        linearOpMode.telemetry.addData("lB", speeds[2] * multiplier);
+        linearOpMode.telemetry.addData("rB", speeds[3] * multiplier);
         leftFront.setPower(speeds[0] * multiplier);
         rightFront.setPower(speeds[1] * multiplier);
         leftBack.setPower(speeds[2] * multiplier);

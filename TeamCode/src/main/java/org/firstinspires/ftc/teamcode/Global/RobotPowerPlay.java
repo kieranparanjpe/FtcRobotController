@@ -57,8 +57,8 @@ public  class RobotPowerPlay {
 
     public ColorSensor slideColourSensor;
 
-    public PIDController rightSlidePID = new PIDController(0.001, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
-    public PIDController leftSlidePID = new PIDController(0.001, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
+    public PIDController rightSlidePID = new PIDController(0.003, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
+    public PIDController leftSlidePID = new PIDController(0.003, 0.00, 0.0002);//0.01, 0, 0.0000 ; 0.0002
 
     protected PIDController lFPID = new PIDController(0.001, 0.000, 0.0000);
     protected PIDController rFPID = new PIDController(0.001, 0.000, 0.0000);

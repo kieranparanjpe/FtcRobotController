@@ -146,7 +146,7 @@ public class DriverMode extends LinearOpMode
 //                double rightBackPower = Range.clip(leftY + leftX - rightX, -driveSpeed, driveSpeed);
 //                double rightFrontPower = Range.clip(leftY - leftX - rightX, -driveSpeed, driveSpeed);
 
-                robot.driveByVector(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, 0.5);
+                robot.driveByVector(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, 1);
 
                 telemetry.addLine("left_x, " + gamepad1.left_stick_y);
                 telemetry.addLine("left_y, " + gamepad1.left_stick_x);

@@ -11,6 +11,6 @@ public enum SlidePosition
     GROUND,
     LOW,
     MID,
-    HIGH
+    HIGHAUTO, HIGH
 }
 

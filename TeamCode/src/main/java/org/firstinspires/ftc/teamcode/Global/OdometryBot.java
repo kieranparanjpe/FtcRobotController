@@ -319,7 +319,7 @@ public class OdometryBot extends RobotPowerPlay {
             distanceToTarget = Math.sqrt(Math.pow(xBlue - xTarget, 2) + Math.pow(yBlue - yTarget, 2));
         }
         drive = (Math.cos(Math.toRadians(driveAngle)) * magnitude);
-        strafe = Range.clip(Math.sin(Math.toRadians(driveAngle)) * magnitude * 1.3, 0, bigMagnitude);
+        strafe = Range.clip(Math.sin(Math.toRadians(driveAngle)) * magnitude * 1.3, -bigMagnitude, bigMagnitude);
 
         driveByVector(-drive, -strafe, twist, 1);
         RobotLog.d(String.format("BlueX: %f BlueY: %f Theta: %f Angle: %f Drive: %f Strafe: %f Twist: %f", xBlue, yBlue, thetaDEG, driveAngle, drive, strafe, twist));

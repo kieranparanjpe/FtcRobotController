@@ -67,7 +67,7 @@ public  class RobotPowerPlay {
     protected GyroPIDController gyroPID = new GyroPIDController(0.5, 0, 0);
 
     protected final double maxSlideSpeed = 1;
-    protected final double pincherLightOpen = 0.275;
+    protected final double pincherLightOpen = 0.271;
     protected final double pincherHardOpen = 0.175;
 
     public SlidePosition slidePosition = SlidePosition.DOWN;
@@ -164,6 +164,7 @@ public  class RobotPowerPlay {
         slidePositions.put(SlidePosition.LOW, 733); //1100
         slidePositions.put(SlidePosition.MID, 1332); //2000
         slidePositions.put(SlidePosition.HIGH, 2050); // 2064 -- original: 3100
+        slidePositions.put(SlidePosition.HIGHAUTO, 2050); // 2064 -- original: 3100
 
 
         armPositions.put(SlidePosition.DOWN, 0.86);
@@ -176,6 +177,8 @@ public  class RobotPowerPlay {
         armPositions.put(SlidePosition.LOW, 0.12); //400
         armPositions.put(SlidePosition.MID, 0.12); //800
         armPositions.put(SlidePosition.HIGH, 0.12);
+        armPositions.put(SlidePosition.HIGHAUTO, 0.05);
+
 
     }
 

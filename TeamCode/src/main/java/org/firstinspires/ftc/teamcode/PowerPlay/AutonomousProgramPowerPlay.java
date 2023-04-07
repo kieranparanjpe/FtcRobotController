@@ -57,7 +57,7 @@ import java.util.ArrayList;
          int target = 2;
 
          //AutoNoCycle();
-         ThirteenVolts();
+         ThirteenVolts4();
 
          while(!isStarted())
          {
@@ -76,6 +76,14 @@ import java.util.ArrayList;
 
 
                  chosen = "Auto: Red Left; Cycle: " + cycle;
+             }
+
+             if(gamepad1.a)
+             {
+                 cycle = true;
+                 Order37();
+
+                 chosen = "Order 37 " + cycle;
              }
 
              target = robot.GetTargetLocation();
@@ -116,15 +124,15 @@ import java.util.ArrayList;
              }
              if (target == 2) {
                  RobotLog.d("PARK 2");
-                 states.add(robot.new AllenCoordDrive( 10000, -66000, 0, 1000, 2, 0.9, true, false));
+                 states.add(robot.new AllenCoordDrive( -2000, -66000, 0, 1000, 2, 0.9, true, false));
                  states.add(robot.new Wait(delay));
                  states.add(robot.new Wait(delay));
                  states.add(robot.new Wait(delay));
                  states.add(robot.new Wait(delay));
              }
              if (target == 3) {
-                 RobotLog.d("PARK 2");
-                 states.add(robot.new AllenCoordDrive( 70000, -66000, 0, 1000, 2, 0.9, true, false));
+                 RobotLog.d("PARK 3");
+                 states.add(robot.new AllenCoordDrive( 32000, -66000, 0, 1000, 2, 0.9, true, false));
                  states.add(robot.new Wait(delay));
                  states.add(robot.new Wait(delay));
                  states.add(robot.new Wait(delay));
@@ -289,7 +297,246 @@ import java.util.ArrayList;
 
      }
 
-     private void ThirteenVolts()
+     private void ThirteenVolts5()
+     {
+         states = new ArrayList<State>();
+
+         //first drive
+         //  states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
+
+
+         states.add(robot.new AllenCoordDrive(-30000, -60000, 0, 40000, 2, 1, false, false));
+         states.add(robot.new Wait(0.5));
+         //states.add(robot.new AllenCoordDrive(-5000, -52000, 0, 500, 2, 0.7, true, false));
+         //states.add(robot.new Wait(2));
+
+         states.add(robot.new AllenCoordDrive(-5000, -53000, 25, 500, 2, 1, true, false));
+         //states.add(robot.new Wait(0.5));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(1.6));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN4));
+         states.add(robot.new Wait(0.5));
+
+         //states.add(robot.new Wait(delay));
+         states.add(robot.new AllenCoordDrive(-10000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1));
+         states.add(robot.new AllenCoordDrive(-26000, -66000, 90, 1000, 2, 0.7, true, false));
+         states.add(robot.new Wait(1));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new AllenCoordDrive(-18000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN3));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new AllenCoordDrive(-28000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.3));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new AllenCoordDrive(-18000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN2));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new AllenCoordDrive(-28000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.4));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
+         states.add(robot.new Wait(0.7));
+         states.add(robot.new AllenCoordDrive(-29000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.5));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.1));
+         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+         states.add(robot.new Wait(0.7));
+         states.add(robot.new AllenCoordDrive(-29000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.5));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.1));
+         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.5));
+         //states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+
+
+         // states.add(robot.new RoadRunnerTurn(-71, 5000, false));
+         //states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+
+
+
+
+//         states.add(robot.new Wait(delay));
+//         states.add(robot.new Wait(delay));
+//         states.add(robot.new Wait(delay));
+//         states.add(robot.new Wait(delay));
+
+         /*states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));*/
+
+
+     }
+
+     private void ThirteenVolts4()
+     {
+         double placeWait = 0.5;
+         double pickupPosition = -25000;
+
+         states = new ArrayList<State>();
+
+         //first drive
+         //  states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
+
+
+         states.add(robot.new AllenCoordDrive(-30000, -60000, 0, 40000, 2, 1, false, false));
+         states.add(robot.new Wait(0.5));
+         //states.add(robot.new AllenCoordDrive(-5000, -52000, 0, 500, 2, 0.7, true, false));
+         //states.add(robot.new Wait(2));
+
+         states.add(robot.new AllenCoordDrive(-5000, -53000, 25, 500, 2, 1, true, false));
+         //states.add(robot.new Wait(0.5));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(1.6));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN4));
+         states.add(robot.new Wait(0.5));
+
+         //states.add(robot.new Wait(delay));
+         states.add(robot.new AllenCoordDrive(-10000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1));
+         states.add(robot.new AllenCoordDrive(pickupPosition, -66000, 90, 1000, 2, 0.7, true, false));
+         states.add(robot.new Wait(1));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new AllenCoordDrive(-18000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(placeWait));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN3));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new AllenCoordDrive(pickupPosition - 2000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.3));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new AllenCoordDrive(-18000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(placeWait));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN2));
+         states.add(robot.new Wait(0.5));
+         states.add(robot.new AllenCoordDrive(pickupPosition - 2000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.4));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(placeWait));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
+         states.add(robot.new Wait(0.7));
+         states.add(robot.new AllenCoordDrive(pickupPosition - 3000, -66000, 90, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.5));
+         states.add(robot.new SetClaw(false));
+         states.add(robot.new Wait(0.3));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new ArmToPosition(true));
+         states.add(robot.new Wait(0.1));
+         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
+         states.add(robot.new Wait(1.2));
+         states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
+         states.add(robot.new Wait(placeWait));
+         states.add(robot.new SetClaw(true));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+         states.add(robot.new ArmToPosition(true));
+
+         states.add(robot.new Wait(0.7));
+
+         //states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
+
+
+         // states.add(robot.new RoadRunnerTurn(-71, 5000, false));
+         //states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+
+
+
+
+//         states.add(robot.new Wait(delay));
+//         states.add(robot.new Wait(delay));
+//         states.add(robot.new Wait(delay));
+//         states.add(robot.new Wait(delay));
+
+         /*states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory2, 5000, false));
+         states.add(robot.new RoadRunnerFollowTrajectory(trajectory3, 5000, false));*/
+
+
+     }
+
+     private void Order37()
      {
          states = new ArrayList<State>();
 
@@ -308,85 +555,15 @@ import java.util.ArrayList;
          states.add(robot.new ArmToPosition(true));
          states.add(robot.new Wait(1.6));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.3));
+         states.add(robot.new Wait(20));
          states.add(robot.new SetClaw(true));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN4));
+         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
          states.add(robot.new Wait(0.5));
-
          //states.add(robot.new Wait(delay));
-         states.add(robot.new AllenCoordDrive(-10000, -66000, 90, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1));
-         states.add(robot.new AllenCoordDrive(-26000, -66000, 90, 1000, 2, 0.7, true, false));
-         states.add(robot.new Wait(1));
-         states.add(robot.new SetClaw(false));
-         states.add(robot.new Wait(0.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new AllenCoordDrive(-18000, -66000, 60, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN3));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new AllenCoordDrive(-28000, -66000, 90, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.3));
-         states.add(robot.new SetClaw(false));
-         states.add(robot.new Wait(0.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new AllenCoordDrive(-18000, -66000, 60, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN2));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new AllenCoordDrive(-28000, -66000, 90, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.4));
-         states.add(robot.new SetClaw(false));
-         states.add(robot.new Wait(0.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN1));
-         states.add(robot.new Wait(0.7));
-         states.add(robot.new AllenCoordDrive(-29000, -66000, 90, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.5));
-         states.add(robot.new SetClaw(false));
-         states.add(robot.new Wait(0.3));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(0.1));
-         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
-         states.add(robot.new Wait(0.7));
-         states.add(robot.new AllenCoordDrive(-29000, -66000, 90, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.5));
-         states.add(robot.new SetClaw(false));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(0.1));
-         states.add(robot.new AllenCoordDrive(-19000, -66000, 60, 1000, 2, 0.9, true, false));
-         states.add(robot.new Wait(1.2));
-         states.add(robot.new SetSlidePosition(SlidePosition.HIGH));
-         states.add(robot.new Wait(0.5));
-         states.add(robot.new SetClaw(true));
-         states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
          states.add(robot.new ArmToPosition(true));
          states.add(robot.new Wait(0.5));
+         states.add(robot.new AllenCoordDrive( 10000, -66000, 0, 1000, 2, 0.9, true, false));
+
          //states.add(robot.new SetSlidePosition(SlidePosition.DOWN));
 
 

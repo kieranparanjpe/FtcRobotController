@@ -42,8 +42,8 @@ public class DriverMode extends LinearOpMode
     private double armTimer = 0.5, currentArmTimer;
 
     private double maxDriveSpeed = 1;
-    private double normalDriveSpeed = 0.7;
-    private double minDriveSpeed = 0.2;
+    private double normalDriveSpeed = 0.85;
+    private double minDriveSpeed = 0.4;
 
     FtcDashboard dashboard;
     public static double directDriveSpeed = 0.5;
@@ -66,9 +66,25 @@ public class DriverMode extends LinearOpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        while(!isStarted())
+        {
+            if(gamepad1.a) {
+                attachmentController = gamepad1;
+                telemetry.addData("Drive Mode", "One driver");
+
+            }
+            if(gamepad1.b) {
+                attachmentController = gamepad2;
+                telemetry.addData("Drive Mode", "Two drivers");
+
+            }
+
+            telemetry.update();
+        }
         //endregion
 
-        waitForStart();
+      //  waitForStart();
        // robot.GetTargetLocation();
 
         robot.runtime.reset();
@@ -76,6 +92,18 @@ public class DriverMode extends LinearOpMode
         while(opModeIsActive()) {
 
             robot.onTick();
+
+
+            if(gamepad1.dpad_up) {
+                attachmentController = gamepad1;
+                telemetry.addData("Drive Mode", "One driver");
+
+            }
+            if(gamepad1.dpad_left) {
+                attachmentController = gamepad2;
+                telemetry.addData("Drive Mode", "Two drivers");
+
+            }
             //region driving
             //also had to comment out this to press play with sensors unplugged, remove when necessary
           /*  robot.bucketColorSensor.Color();
@@ -84,15 +112,12 @@ public class DriverMode extends LinearOpMode
             //telemetry.addData("Distance B: ", robot.bucketColorSensor.Distance());*/
             double driveSpeed = 0;
 
-            if(gamepad1.dpad_left)
-                attachmentController = gamepad1;
-
             if(attachmentController != gamepad1)
             {
                 driveSpeed = gamepad1.left_trigger > 0 ? minDriveSpeed : gamepad1.right_trigger > 0 ? maxDriveSpeed : normalDriveSpeed;
             }
             else
-                driveSpeed = gamepad1.right_stick_button ? minDriveSpeed : maxDriveSpeed;
+                driveSpeed = gamepad1.left_trigger > 0 ? minDriveSpeed : normalDriveSpeed;
 
             if(driveState == DriveControlState.DRIVING)
             {
@@ -146,7 +171,7 @@ public class DriverMode extends LinearOpMode
 //                double rightBackPower = Range.clip(leftY + leftX - rightX, -driveSpeed, driveSpeed);
 //                double rightFrontPower = Range.clip(leftY - leftX - rightX, -driveSpeed, driveSpeed);
 
-                robot.driveByVector(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, 1);
+                robot.driveByVector(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, driveSpeed);
 
                 telemetry.addLine("left_x, " + gamepad1.left_stick_y);
                 telemetry.addLine("left_y, " + gamepad1.left_stick_x);
@@ -221,7 +246,7 @@ public class DriverMode extends LinearOpMode
                 robot.armServo2.ChangePosition(attachmentController.right_stick_y * 0.01);
 
             }
-            else if(attachmentController == gamepad2 && attachmentController.right_bumper)
+            else if(attachmentController.right_bumper)
             {
                 robot.armServo1.SetPosition(0.3);
                 robot.armServo2.SetPosition(0.3);

@@ -67,8 +67,8 @@ public  class RobotPowerPlay {
     protected GyroPIDController gyroPID = new GyroPIDController(0.5, 0, 0);
 
     protected final double maxSlideSpeed = 1;
-    protected final double pincherLightOpen = 0.271;
-    protected final double pincherHardOpen = 0.175;
+    protected final double pincherLightOpen = 0.271; //0.271
+    protected final double pincherHardOpen = 0.2; //0.175
 
     public SlidePosition slidePosition = SlidePosition.DOWN;
     protected final Hashtable<SlidePosition, Integer> slidePositions = new Hashtable<SlidePosition, Integer>();
@@ -122,7 +122,7 @@ public  class RobotPowerPlay {
         slideMotor1 = hardwareMap.get(DcMotorEx.class, "SlideMotor1");
         slideMotor2 = hardwareMap.get(DcMotorEx.class, "SlideMotor2");
 
-        pincherServo = new ServoData("GripServo", 0.33, pincherHardOpen, hardwareMap, Servo.Direction.FORWARD);
+        pincherServo = new ServoData("GripServo", 0.37, pincherHardOpen, hardwareMap, Servo.Direction.FORWARD);
         //had to comment below cuz it wouldn't let me press play with the sensors unplugged, can change when necessary
        // outerColorSensor = new ColorSensor(hardwareMap.get(RevColorSensorV3.class, "OuterSensor"),
          //       new ColourRange[] { new ColourRange(new Scalar(140, 100, 0), new Scalar(260, 260, 260)), new ColourRange(new Scalar(0, 100, 0), new Scalar(40, 260, 260))}
@@ -168,10 +168,10 @@ public  class RobotPowerPlay {
 
 
         armPositions.put(SlidePosition.DOWN, 0.86);
-        armPositions.put(SlidePosition.DOWN1, 0.83);
-        armPositions.put(SlidePosition.DOWN2, 0.79);
-        armPositions.put(SlidePosition.DOWN3, 0.76);
-        armPositions.put(SlidePosition.DOWN4, 0.70);
+        armPositions.put(SlidePosition.DOWN1, 0.82);
+        armPositions.put(SlidePosition.DOWN2, 0.78);
+        armPositions.put(SlidePosition.DOWN3, 0.74);
+        armPositions.put(SlidePosition.DOWN4, 0.69);
 
         armPositions.put(SlidePosition.GROUND, 0.5);
         armPositions.put(SlidePosition.LOW, 0.12); //400

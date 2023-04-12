@@ -62,7 +62,7 @@ public class OdometryBot extends RobotPowerPlay {
     public boolean isCoordinateDriving = false;
     public boolean isTurningInPlace = false;
 
-    MiniPID drivePID = new MiniPID(0.1, 0, 0);//i: 0.006 d: 0.06
+    MiniPID drivePID = new MiniPID(0.08, 0, 0.3);//i: 0.006 d: 0.06
     MiniPID twistPID = new MiniPID(0.015, 0, 0);
 
     double globalTargetX = 0;
@@ -302,7 +302,7 @@ public class OdometryBot extends RobotPowerPlay {
 
     public boolean driveToCoordinateUpdate(double xTarget, double yTarget, double targetTheta, int tolerance, double angleTol, double bigMagnitude) {
         drivePID.setOutputLimits(bigMagnitude);
-        twistPID.setOutputLimits(0.6);
+        twistPID.setOutputLimits(0.55);
         thetaDifference = targetTheta - thetaDEG;
         twist = twistPID.getOutput(thetaDEG, targetTheta);
         double rawDriveAngle = -Math.toDegrees(Math.atan2(xTarget - xBlue, yTarget - yBlue));
@@ -310,7 +310,7 @@ public class OdometryBot extends RobotPowerPlay {
         double magnitude = Math.min(bigMagnitude, Math.abs(drivePID.getOutput(distanceToTarget/3000, 0))*2);
         if (Math.abs(distanceToTarget) < 8000) {
             magnitude = Math.max(0.15, Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/800, 0))));
-            magnitude = Range.clip(Math.abs(drivePID.getOutput(distanceToTarget/2000, 0)), 0.15, 0.5);
+            magnitude = Range.clip(Math.abs(drivePID.getOutput(distanceToTarget/1000, 0)), 0.15, 0.5);
 
         }
         if (xBlue > xTarget) {
@@ -319,13 +319,13 @@ public class OdometryBot extends RobotPowerPlay {
             distanceToTarget = Math.sqrt(Math.pow(xBlue - xTarget, 2) + Math.pow(yBlue - yTarget, 2));
         }
         drive = (Math.cos(Math.toRadians(driveAngle)) * magnitude);
-        strafe = Range.clip(Math.sin(Math.toRadians(driveAngle)) * magnitude * 1.3, -bigMagnitude, bigMagnitude);
+        strafe = Range.clip(Math.sin(Math.toRadians(driveAngle)) * magnitude * 2, -bigMagnitude, bigMagnitude);
 
         driveByVector(-drive, -strafe, twist, 1);
         RobotLog.d(String.format("BlueX: %f BlueY: %f Theta: %f Angle: %f Drive: %f Strafe: %f Twist: %f", xBlue, yBlue, thetaDEG, driveAngle, drive, strafe, twist));
         RobotLog.d(String.format("Distance: %f Magnitude: %f", distanceToTarget, magnitude));
 
-        if ((xTarget + tolerance > xBlue) && (xTarget - tolerance < xBlue) && (yTarget + tolerance > yBlue) && (yTarget - tolerance < yBlue) && Math.abs(thetaDifference) < angleTol) {
+        if ((xTarget + tolerance > xBlue) && (xTarget - tolerance < xBlue) && (yTarget + tolerance > yBlue) && (yTarget - tolerance < yBlue) && Math.abs(thetaDifference) < angleTol && (Math.abs(drive) < 0.2)) {
             driveByVector(0, 0, 0, 1);
             RobotLog.d("TARGET REACHED");
             isCoordinateDriving = false;

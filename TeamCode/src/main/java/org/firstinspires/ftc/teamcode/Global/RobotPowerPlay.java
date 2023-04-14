@@ -167,17 +167,17 @@ public  class RobotPowerPlay {
         slidePositions.put(SlidePosition.HIGHAUTO, 2050); // 2064 -- original: 3100
 
 
-        armPositions.put(SlidePosition.DOWN, 0.86);
-        armPositions.put(SlidePosition.DOWN1, 0.82);
-        armPositions.put(SlidePosition.DOWN2, 0.78);
-        armPositions.put(SlidePosition.DOWN3, 0.74);
-        armPositions.put(SlidePosition.DOWN4, 0.69);
+        armPositions.put(SlidePosition.DOWN, 0.87);
+        armPositions.put(SlidePosition.DOWN1, 0.83);
+        armPositions.put(SlidePosition.DOWN2, 0.79);
+        armPositions.put(SlidePosition.DOWN3, 0.75);
+        armPositions.put(SlidePosition.DOWN4, 0.72);
 
         armPositions.put(SlidePosition.GROUND, 0.5);
         armPositions.put(SlidePosition.LOW, 0.12); //400
         armPositions.put(SlidePosition.MID, 0.12); //800
         armPositions.put(SlidePosition.HIGH, 0.12);
-        armPositions.put(SlidePosition.HIGHAUTO, 0.05);
+        armPositions.put(SlidePosition.HIGHAUTO, 0.08);
 
 
     }

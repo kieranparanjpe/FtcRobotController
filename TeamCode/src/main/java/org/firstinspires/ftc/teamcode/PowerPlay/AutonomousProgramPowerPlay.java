@@ -249,7 +249,7 @@ import java.util.ArrayList;
 
          states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
          states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(1.6));
+         states.add(robot.new Wait(1.8));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
          states.add(robot.new Wait(placeWait));
          states.add(robot.new SetClaw(true));
@@ -265,7 +265,7 @@ import java.util.ArrayList;
          states.add(robot.new Wait(0.3));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
          states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(0.9));
+         states.add(robot.new Wait(0.4));
          //drive to drop position
          states.add(robot.new AllenCoordDrive(-17000, -67000, dropAngle, 1000, 2, 0.9, true, false));
          states.add(robot.new Wait(1.5));
@@ -349,7 +349,7 @@ import java.util.ArrayList;
 
          states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
          states.add(robot.new ArmToPosition(true));
-         states.add(robot.new Wait(1.6));
+         states.add(robot.new Wait(1.8));
          states.add(robot.new SetSlidePosition(SlidePosition.HIGHAUTO));
          states.add(robot.new Wait(placeWait));
          states.add(robot.new SetClaw(true));

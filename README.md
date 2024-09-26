@@ -1,3 +1,12 @@
+## This is the Robot Code for FTC #16267 Forces Unknown for the 2022-2023 season.
+Features include:
+Custom PID solution for tracking linear slide position.
+OpenCV for AprilTag detection.
+Odometry using deadwheels to track precise robot position in tandem with IMU gyroscope to track rotation.
+
+
+
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the POWERPLAY (2022-2023) competition season.
